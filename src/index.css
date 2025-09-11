@@ -18,8 +18,3 @@
 body {
   min-height: 100dvh;
 }
-
-header h1 {
-  font-family: 'Anton', sans-serif;
-  letter-spacing: 0.05em;
-}
