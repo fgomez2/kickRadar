@@ -7,3 +7,15 @@
   font-family: 'Inter Tight Variable', sans-serif;
   font-weight: 600;
 }
+
+/* Animación para el menú desplegable móvil */
+@keyframes despliegueMenu {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
