@@ -8,7 +8,7 @@
   font-weight: 600;
 }
 
-/* Animación para el menú desplegable móvil */
+/* Animación para el menú desplegable */
 @keyframes despliegueMenu {
   from {
     opacity: 0;
