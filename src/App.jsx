@@ -5,11 +5,14 @@ import './App.css'
 
 function App() {
   return (
-    <div className="min-h-screen flex flex-col">
-      <KickHeader />
-      <KickMain />
-      <KickFooter />
-    </div>
+    <>
+      <div className="min-h-screen flex flex-col">
+        <KickHeader />
+        <KickMain />
+        <KickFooter />
+      </div>
+    </>
+    
   )
 }
 

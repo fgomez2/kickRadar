@@ -1,4 +1,5 @@
 export default function KickMain() {
+    {/* Recordar fuente ORBITRON POSIBLE OPCIÓN */}
     return (
         <main className="flex-grow bg-black text-white p-6 relative">
             <h1 className="text-3xl font-bold mb-4">Bienvenido a KickRadar</h1>
