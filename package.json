@@ -12,6 +12,7 @@
   "dependencies": {
     "@fontsource-variable/inter-tight": "^5.2.6",
     "@fontsource/anton": "^5.2.6",
+    "@fontsource/dm-serif-display": "^5.2.8",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
