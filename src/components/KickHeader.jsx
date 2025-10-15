@@ -11,7 +11,7 @@ export default function KickMain() {
     }
 
     return (
-        <header className="bg-black py-5 px-4 sm:py-6 sm:px-6 md:py-8 sticky top-0 z-500">
+        <header className="bg-black py-5 px-4 sm:py-6 sm:px-6 md:py-8 sticky top-0 z-50">
             <div className="flex items-center justify-between ml-3 sm:ml-4 md:ml-6 mr-3 sm:mr-4 md:mr-6">
                 {/* Título y logo */}
                 <div className="flex items-center">

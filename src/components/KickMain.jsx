@@ -25,7 +25,7 @@ export default function KickMain() {
                     {/* Div izquierdo - Contenido de texto */}
                     <div className="flex flex-col items-center lg:items-start text-center lg:text-left space-y-8">
                         <h1 className={`${estilosMain.tagline} text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight`}>
-                            Encuentra tus sneakers favoritas al mejor precio.
+                            Encuentraa tus sneakers favoritas al mejor precio.
                         </h1>
                         
                         <p className="text-xl sm:text-2xl text-gray-300 font-light tracking-wide">
@@ -44,13 +44,12 @@ export default function KickMain() {
                     {/* Div derecho - imagen oculta en el movil) */}
                     <div className="hidden lg:flex justify-center items-center">
                         <div className="relative">
-                            <div className="absolute inset-0 bg-green-400/20 blur-3xl rounded-full scale-110"></div>
-                            <img src="/images/jordan1_pinegreen.webp" alt="Jordan 1 Pine Green" 
-                                className="relative z-10 w-full max-w-lg h-auto object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500"
+                            <div className="absolute inset-0 bg-green-400/20 blur-[80px] rounded-full scale-125"></div>
+                            <img src="/images/jordan1_pinegreen_4.webp" alt="Jordan 1 Pine Green"
+                                className="relative z-10 w-full max-w-2xl h-auto object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500"
                             />
                         </div>
                     </div>
-                    
                 </div>
             </div>
         </main>
