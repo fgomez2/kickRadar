@@ -10,7 +10,7 @@ export default function KickMain() {
     // }
 
     return (
-        <main className="flex-grow bg-black text-white relative overflow-hidden">
+        <main className="flex-grow bg-black text-white relative overflow-hidden flex items-center justify-center">
             {/* Efecto de fondo */}
             <div className="absolute -bottom-40 -right-40 w-[800px] h-[800px] pointer-events-none opacity-30"
                 style={{
@@ -19,7 +19,7 @@ export default function KickMain() {
                 }}
             ></div>
             
-            <div className="relative z-10 h-full flex items-center px-6 sm:px-12 lg:px-20 py-12">
+            <div className="relative z-10 w-full px-6 sm:px-12 lg:px-20 py-12">
                 <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-7xl mx-auto">
                     
                     {/* Div izquierdo - Contenido de texto */}
