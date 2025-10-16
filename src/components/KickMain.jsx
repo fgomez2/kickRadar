@@ -25,7 +25,7 @@ export default function KickMain() {
                     {/* Div izquierdo - Contenido de texto */}
                     <div className="flex flex-col items-center lg:items-start text-center lg:text-left space-y-8">
                         <h1 className={`${estilosMain.tagline} text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight`}>
-                            Encuentraa tus sneakers favoritas al mejor precio.
+                            Encuentra tus sneakers favoritas al mejor precio.
                         </h1>
                         
                         <p className="text-xl sm:text-2xl text-gray-300 font-light tracking-wide">
