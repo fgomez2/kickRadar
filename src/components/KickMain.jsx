@@ -1,6 +1,7 @@
-import '@fontsource/dm-serif-display';
-import estilosMain from './KickMain.module.css';
-import CarruselMarcas from './CarruselMarcas.jsx';
+import '@fontsource/dm-serif-display'
+import estilosMain from './KickMain.module.css'
+import CarruselMarcas from './KickCarruselMarcas.jsx'
+import KickCaracteristicas from './KickCaracteristicas.jsx'
 
 export default function KickMain() {
 
@@ -12,7 +13,7 @@ export default function KickMain() {
 
     return (
         <main className="flex-grow bg-black text-white relative overflow-hidden">
-            <div className="flex items-center justify-center min-h-screen">
+            <div className="flex items-center justify-center min-h-[calc(100vh-180px)] sm:min-h-[calc(100vh-160px)] lg:min-h-screen">
                 {/* Efecto de fondo */}
                 <div className="absolute -bottom-40 -right-40 w-[800px] h-[800px] pointer-events-none opacity-30"
                     style={{
@@ -21,11 +22,11 @@ export default function KickMain() {
                     }}
                 ></div>
                 
-                <div className="relative z-10 w-full px-6 sm:px-12 lg:px-20 py-12">
-                    <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-7xl mx-auto">
+                <div className="relative z-10 w-full px-6 sm:px-12 lg:px-20 py-6 sm:py-8 lg:py-12">
+                    <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-12 items-center max-w-7xl mx-auto">
                         
                         {/* Div izquierdo - Contenido de texto */}
-                        <div className="flex flex-col items-center lg:items-start text-center lg:text-left space-y-8">
+                        <div className="flex flex-col items-center lg:items-start text-center lg:text-left space-y-6 sm:space-y-7 lg:space-y-8">
                             <h1 className={`${estilosMain.eslogan} text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight`}>
                                 Encuentra tus sneakers favoritas al mejor precio.
                             </h1>
@@ -57,6 +58,8 @@ export default function KickMain() {
             </div>
 
             <CarruselMarcas />
+
+            <KickCaracteristicas />
         </main>
     )
 }

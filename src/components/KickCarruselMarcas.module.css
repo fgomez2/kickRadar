@@ -32,7 +32,7 @@
     }
 }
 
-/* Pausar la animación al hacer hover */
+/* Se pausa la animación al hacer hover */
 .primerosLogos:hover .primerosLogosContenido {
     animation-play-state: paused;
 }
