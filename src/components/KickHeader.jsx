@@ -11,7 +11,7 @@ export default function KickMain() {
     }
 
     return (
-        <header className="bg-black py-5 px-4 sm:py-6 sm:px-6 md:py-8 sticky top-0 z-50">
+        <header className="bg-black py-3 px-4 sm:py-4 sm:px-6 md:py-5 lg:py-8 sticky top-0 z-50">
             <div className="flex items-center justify-between ml-3 sm:ml-4 md:ml-6 mr-3 sm:mr-4 md:mr-6">
                 {/* Título y logo */}
                 <div className="flex items-center">
@@ -77,7 +77,7 @@ export default function KickMain() {
             </div>
 
             {/* Barra de busqueda - móvil y tablet */}
-            <div className="lg:hidden mt-4 flex justify-center px-6">
+            <div className="lg:hidden mt-3 sm:mt-4 flex justify-center px-6">
                 <div className="relative w-full max-w-md">
                     <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-400 pointer-events-none">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -104,8 +104,8 @@ export default function KickMain() {
 
             {/* Menú desplegable */}
             {menuAbierto && (
-                <div className="lg:hidden mt-4 mx-3 sm:mx-4 md:mx-6 bg-gray-900 rounded-lg border border-gray-700 overflow-hidden animate-[slideDown_0.3s_ease-out]">
-                    <div className="flex flex-col space-y-2 p-4">
+                <div className="lg:hidden mt-3 sm:mt-4 mx-3 sm:mx-4 md:mx-6 bg-gray-900 rounded-lg border border-gray-700 overflow-hidden animate-[slideDown_0.3s_ease-out]">
+                    <div className="flex flex-col space-y-2 p-3 sm:p-4">
                         <button className="bg-white hover:bg-gray-100 text-black px-4 py-3 rounded-full text-base font-medium transition-all duration-300 
                                          shadow-[0_0_8px_rgba(255,255,255,0.3)] 
                                          hover:shadow-[0_0_20px_rgba(255,255,255,0.6)] 

@@ -1,5 +1,5 @@
-import '@fontsource/dm-serif-display';
-import estilosCarrusel from './CarruselMarcas.module.css';
+import '@fontsource/dm-serif-display'
+import estilosCarrusel from './KickCarruselMarcas.module.css'
 
 export default function CarruselMarcas() {
     const logos = [
@@ -8,7 +8,7 @@ export default function CarruselMarcas() {
         { src: '/images/brands/logo_adidas.svg', alt: 'Adidas' },
         { src: '/images/brands/logo_nb.svg', alt: 'New Balance' },
         { src: '/images/brands/logo_asics.svg', alt: 'Asics' }
-    ];
+    ]
 
     return (
         <div className="relative z-10 w-full py-4 mt-2 sm:py-6 sm:mt-4 lg:py-8 lg:mt-8">
@@ -45,5 +45,5 @@ export default function CarruselMarcas() {
                 </div>
             </div>
         </div>
-    );
+    )
 }
