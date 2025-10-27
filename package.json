@@ -15,7 +15,8 @@
     "@fontsource/dm-serif-display": "^5.2.8",
     "animejs": "^4.2.2",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react-dom": "^19.1.1",
+    "react-router-dom": "^7.9.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
