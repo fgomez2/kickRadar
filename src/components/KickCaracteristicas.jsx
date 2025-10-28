@@ -1,6 +1,6 @@
 import estilosCaracteristicas from './KickCaracteristicas.module.css' // Para reutilizar la fuente del main
 
-export default function KickCaracteristicas() {
+export default function KickCaracteristicas({ onComenzarClick }) {
     const caracteristicas = [
         {
             id: 1,
@@ -114,7 +114,8 @@ export default function KickCaracteristicas() {
 
                 {/* Botón, de momento lo dejo */}
                 <div className="text-center mt-12 sm:mt-16 lg:mt-20">
-                    <button className="bg-green-400 hover:bg-green-500 text-white px-8 sm:px-10 py-3 sm:py-4 rounded-full text-base sm:text-lg font-semibold transition-all duration-300 
+                    <button onClick={onComenzarClick}
+                        className="bg-green-400 hover:bg-green-500 text-white px-8 sm:px-10 py-3 sm:py-4 rounded-full text-base sm:text-lg font-semibold transition-all duration-300 
                                     shadow-[0_0_20px_rgba(34,197,94,0.5)] 
                                     hover:shadow-[0_0_35px_rgba(34,197,94,0.9)] 
                                     hover:scale-105 active:scale-95 

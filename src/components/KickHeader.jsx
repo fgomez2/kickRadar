@@ -1,24 +1,42 @@
-import { useState } from 'react'
-import '@fontsource/anton'
-import '@fontsource-variable/inter-tight'
+import { useState, forwardRef, useImperativeHandle, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import estilosHeader from './KickHeader.module.css'
 
-export default function KickMain() {
+const KickHeader = forwardRef((props, parentRef) => {
+ 
     const [menuAbierto, setMenuAbierto] = useState(false)
+    const desktopInputRef = useRef(null)
+    const movilInputRef = useRef(null)
+
+    // hacer focus en el input visible
+    useImperativeHandle(parentRef, () => ({
+        focus: () => {
+            // focus en desktop primero, luego en móvil
+            if (desktopInputRef.current && window.innerWidth >= 1024) {
+                desktopInputRef.current.focus()
+            } else if (movilInputRef.current) {
+                movilInputRef.current.focus()
+            }
+        }
+    }))
 
     const toggleMenu = () => {
         setMenuAbierto(!menuAbierto)
     }
 
     return (
-        <header className="bg-black py-3 px-4 sm:py-4 sm:px-6 md:py-5 lg:py-8 sticky top-0 z-50">
-            <div className="flex items-center justify-between ml-3 sm:ml-4 md:ml-6 mr-3 sm:mr-4 md:mr-6">
-                {/* Título y logo */}
-                <div className="flex items-center">
-                    <h1 className={`${estilosHeader.titulo} text-white text-2xl sm:text-3xl md:text-4xl font-bold`}>kickRadar</h1>
-                    <img src="/images/logo_radar.png" alt="KickRadar Logo" className="h-10 sm:h-12 md:h-14 lg:h-16 w-auto ml-2 sm:ml-3" />
-                </div>
-                
+        // Mostrar el header Login/Registro si no hay usuario logueado
+        <header className={`${estilosHeader.header} fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-sm py-3 sm:py-4 md:py-5 lg:py-8`}>
+            <div className="container mx-auto px-4 flex items-center justify-between">
+                {/* Logo */}
+                <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    {/* <h1 className={`${estilosHeader.titulo} text-white text-2xl sm:text-3xl md:text-4xl font-bold`}>kickRadar</h1> */}
+                    <span className={`${estilosHeader.titulo} text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-white`}>
+                        kick<span className="text-green-400">Radar</span>
+                    </span>
+                    <img src="/images/logo_radar.png" alt="KickRadar Logo" className="h-10 sm:h-12 md:h-14 lg:h-16 xl:h-20 w-auto ml-2 sm:ml-3" />
+                </Link>
+                                                    
                 {/* Barra de busqueda - desktop */}
                 <div id='barra_busqueda' className="hidden lg:block">
                     <div className="relative">
@@ -27,9 +45,7 @@ export default function KickMain() {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
                         </div>
-                        <input
-                            type="text"
-                            placeholder="Buscar sneaker..."
+                        <input ref={desktopInputRef} type="text" placeholder="Buscar sneaker..."
                             className={`${estilosHeader.barraBusqueda} bg-gray-900 border-2 border-green-400 text-white pl-10 pr-4 py-2 rounded-full 
                                      shadow-[0_0_10px_rgba(34,197,94,0.5)] 
                                      hover:shadow-[0_0_15px_rgba(34,197,94,0.7)]
@@ -84,9 +100,7 @@ export default function KickMain() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                     </div>
-                    <input
-                        type="text"
-                        placeholder="Buscar sneaker..."
+                    <input ref={movilInputRef} type="text" placeholder="Buscar sneaker..."
                         className={`${estilosHeader.barraBusqueda} bg-gray-900 border-2 border-green-400 text-white pl-10 pr-4 py-2 rounded-full 
                                  shadow-[0_0_10px_rgba(34,197,94,0.5)] 
                                  hover:shadow-[0_0_15px_rgba(34,197,94,0.7)]
@@ -125,4 +139,8 @@ export default function KickMain() {
             )}
         </header>
     )
-}
+})
+
+KickHeader.displayName = 'KickHeader'
+
+export default KickHeader
