@@ -63,20 +63,24 @@ const KickHeader = forwardRef((props, parentRef) => {
                 
                 {/* Botones de autenticación - desktop */}
                 <div className="hidden lg:flex items-center space-x-3">
-                    <button className="bg-white hover:bg-gray-100 text-black px-4 py-2 rounded-full text-sm md:text-base font-medium transition-all duration-300 
-                                     shadow-[0_0_8px_rgba(255,255,255,0.3)] 
-                                     hover:shadow-[0_0_20px_rgba(255,255,255,0.6)] 
-                                     hover:scale-105 active:scale-95 
-                                     transform hover:-translate-y-0.5">
-                        Login
-                    </button>
-                    <button className="bg-green-400 hover:bg-green-500 text-white px-4 py-2 rounded-full text-sm md:text-base font-medium transition-all duration-300 
-                                     shadow-[0_0_10px_rgba(34,197,94,0.4)] 
-                                     hover:shadow-[0_0_25px_rgba(34,197,94,0.8)] 
-                                     hover:scale-105 active:scale-95 
-                                     transform hover:-translate-y-0.5">
-                        Regístrate
-                    </button>
+                    <Link to="/auth">
+                        <button className="bg-white hover:bg-gray-100 text-black px-4 py-2 rounded-full text-sm md:text-base font-medium transition-all duration-300 
+                                         shadow-[0_0_8px_rgba(255,255,255,0.3)] 
+                                         hover:shadow-[0_0_20px_rgba(255,255,255,0.6)] 
+                                         hover:scale-105 active:scale-95 
+                                         transform hover:-translate-y-0.5">
+                            Login
+                        </button>
+                    </Link>
+                    <Link to="/auth">
+                        <button className="bg-green-400 hover:bg-green-500 text-white px-4 py-2 rounded-full text-sm md:text-base font-medium transition-all duration-300 
+                                         shadow-[0_0_10px_rgba(34,197,94,0.4)] 
+                                         hover:shadow-[0_0_25px_rgba(34,197,94,0.8)] 
+                                         hover:scale-105 active:scale-95 
+                                         transform hover:-translate-y-0.5">
+                            Regístrate
+                        </button>
+                    </Link>
                 </div>
 
                 {/* Botón hamburguesa - móvil y tablet */}
@@ -120,20 +124,24 @@ const KickHeader = forwardRef((props, parentRef) => {
             {menuAbierto && (
                 <div className="lg:hidden mt-3 sm:mt-4 mx-3 sm:mx-4 md:mx-6 bg-gray-900 rounded-lg border border-gray-700 overflow-hidden animate-[slideDown_0.3s_ease-out]">
                     <div className="flex flex-col space-y-2 p-3 sm:p-4">
-                        <button className="bg-white hover:bg-gray-100 text-black px-4 py-3 rounded-full text-base font-medium transition-all duration-300 
-                                         shadow-[0_0_8px_rgba(255,255,255,0.3)] 
-                                         hover:shadow-[0_0_20px_rgba(255,255,255,0.6)] 
-                                         hover:scale-105 active:scale-95 
-                                         transform hover:-translate-y-0.5">
-                            Login
-                        </button>
-                        <button className="bg-green-400 hover:bg-green-500 text-white px-4 py-3 rounded-full text-base font-medium transition-all duration-300 
-                                         shadow-[0_0_10px_rgba(34,197,94,0.4)] 
-                                         hover:shadow-[0_0_25px_rgba(34,197,94,0.8)] 
-                                         hover:scale-105 active:scale-95 
-                                         transform hover:-translate-y-0.5">
-                            Regístrate
-                        </button>
+                        <Link to="/auth">
+                            <button className="w-full bg-white hover:bg-gray-100 text-black px-4 py-3 rounded-full text-base font-medium transition-all duration-300 
+                                             shadow-[0_0_8px_rgba(255,255,255,0.3)] 
+                                             hover:shadow-[0_0_20px_rgba(255,255,255,0.6)] 
+                                             hover:scale-105 active:scale-95 
+                                             transform hover:-translate-y-0.5">
+                                Login
+                            </button>
+                        </Link>
+                        <Link to="/auth">
+                            <button className="w-full bg-green-400 hover:bg-green-500 text-white px-4 py-3 rounded-full text-base font-medium transition-all duration-300 
+                                             shadow-[0_0_10px_rgba(34,197,94,0.4)] 
+                                             hover:shadow-[0_0_25px_rgba(34,197,94,0.8)] 
+                                             hover:scale-105 active:scale-95 
+                                             transform hover:-translate-y-0.5">
+                                Regístrate
+                            </button>
+                        </Link>
                     </div>
                 </div>
             )}

@@ -1,7 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import Home from '../pages/Home'
-import Login from '../pages/Login'
-import Registro from '../pages/Registro'
+import AuthPage from '../pages/AuthPage'
 
 export default function AppRoutes() {
     return (
@@ -9,12 +8,11 @@ export default function AppRoutes() {
             {/* Ruta --> página de inicio */}
             <Route path="/" element={<Home />} />
 
+            {/* Ruta de autenticación (login y registro) */}
+            <Route path="/auth" element={<AuthPage />} />
+
             {/* Rutas públicas */}
             {/* <Route path="/sobrenosotros" element={<SobreNosotros />} />
-
-            {/* Rutas protegidasº */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/registro" element={<Registro />} />
 
             {/* Rutas protegidas --> de usuario (por ahora públicas) */}
             {/* <Route path="/perfil" element={<PerfilUsuario />} />
