@@ -26,7 +26,7 @@ const KickHeader = forwardRef((props, parentRef) => {
 
     return (
         // Mostrar el header Login/Registro si no hay usuario logueado
-        <header className={`${estilosHeader.header} fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-sm py-3 sm:py-4 md:py-5 lg:py-8`}>
+        <header className={`${estilosHeader.header} bg-black/95 backdrop-blur-sm py-3 sm:py-4 md:py-5 lg:py-8`}>
             <div className="container mx-auto px-4 flex items-center justify-between">
                 {/* Logo */}
                 <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
