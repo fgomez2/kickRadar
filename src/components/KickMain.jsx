@@ -13,7 +13,7 @@ export default function KickMain({ onEmpiezaYaClick }) {
 
     return (
         <main className="flex-grow bg-black text-white relative overflow-hidden">
-            <div className="flex items-center justify-center min-h-screen">
+            <div className="flex items-center justify-center min-h-[calc(100vh-180px)] sm:min-h-[calc(100vh-160px)] lg:min-h-screen lg:pt-32">
                 {/* Efecto de fondo */}
                 <div className="absolute -bottom-40 -right-40 w-[800px] h-[800px] pointer-events-none opacity-30"
                     style={{
