@@ -1,10 +1,16 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import KickHeader from "../components/KickHeader"
 import KickMain from "../components/KickMain"
 import KickFooter from "../components/KickFooter"
 
 export default function Home() {
     const searchInputRef = useRef(null)
+    const headerRef = useRef(null)
+
+    useEffect(() => {
+        document.title = 'kickRadar'
+        headerRef.current?.focus()
+    }, [])
 
     const handleEmpiezaYaClick = () => {
         if (searchInputRef.current) {

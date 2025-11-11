@@ -159,7 +159,7 @@ export default function AuthPage() {
                     
                     {/* Título */}
                     <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-green-600 text-center mb-2">
-                        {modo === 'login' ? 'Bienvenido' : 'Únete a kickRadar'}
+                        {modo === 'login' ? '¡Bienvenido de nuevo!' : 'Únete a kickRadar'}
                     </h1>
                     <p className="text-gray-400 text-center mb-8">
                         {modo === 'login' ? 'Inicia sesión para continuar' : 'Crea tu cuenta en segundos'}

@@ -61,13 +61,27 @@ const KickHeader = forwardRef((props, parentRef) => {
                         // Hay sesión - Mostrar iconos de perfil y cerrar sesión
                         <>
                             {/* Botón de perfil */}
-                            <Link to="/myProfile">
+                            <Link to="/miPerfil">
                                 <button className="group relative p-3 bg-gray-900 hover:bg-gray-800 border-2 border-green-400 rounded-full
                                     transition-all duration-300 shadow-[0_0_15px_rgba(34,197,94,0.4)] hover:shadow-[0_0_25px_rgba(34,197,94,0.7)] hover:scale-110 active:scale-95"
                                     aria-label="Mi perfil" title={user?.email}
                                 >
-                                    <svg className="w-6 h-6 text-green-400 group-hover:text-green-300 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg className="w-6 h-6 text-green-400 group-hover:text-green-300 transition-colors duration-300 group-hover:fill-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    </svg>
+                                </button>
+                            </Link>
+
+                            {/* Botón favoritos */}
+                            <Link to="/misFavoritos">
+                                <button className="group relative p-3 bg-gray-900 hover:bg-gray-800 border-2 border-green-400 
+                                    hover:border-red-400 rounded-full transition-all duration-300 
+                                    shadow-[0_0_15px_rgba(34,197,94,0.4)] hover:shadow-[0_0_25px_rgba(239,68,68,0.6)] 
+                                    hover:scale-110 active:scale-95"
+                                    aria-label="Mis favoritos" title="Mis favoritos"
+                                >
+                                    <svg className="w-6 h-6 text-green-400 group-hover:text-red-500 transition-all duration-300 group-hover:fill-red-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
                                     </svg>
                                 </button>
                             </Link>
@@ -77,16 +91,11 @@ const KickHeader = forwardRef((props, parentRef) => {
                                 className="group relative p-3 bg-gray-900 hover:bg-red-900/20 border-2 border-green-400 
                                 hover:border-red-400 rounded-full transition-all duration-300 
                                 shadow-[0_0_15px_rgba(34,197,94,0.4)] hover:shadow-[0_0_25px_rgba(239,68,68,0.6)] hover:scale-110 active:scale-95"
-                                aria-label="Cerrar sesión"
+                                aria-label="Cerrar sesión" title="Cerrar sesión"
                             >
                                 <svg className="w-6 h-6 text-green-400 group-hover:text-red-400 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                                 </svg>
-                                {/* Tooltip */}
-                                <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-3 py-1 bg-gray-900 text-red-400 text-xs rounded-lg border border-red-400/50 whitespace-nowrap opacity-0 
-                                    group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                                    Cerrar sesión
-                                </span>
                             </button>
                         </>
                     ) : (

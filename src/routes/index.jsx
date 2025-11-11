@@ -14,7 +14,7 @@ export default function AppRoutes() {
 
             {/* Rutas protegidas */}
             {/* Ruta de perfil */}
-            <Route path="/myProfile" element={<div>Perfil de usuario (en construcción)</div>} />
+            <Route path="/miPerfil" element={<div>Perfil de usuario (en construcción)</div>} />
 
             {/* Rutas públicas */}
             {/* <Route path="/sobrenosotros" element={<SobreNosotros />} />
