@@ -55,7 +55,7 @@ export default function KickCaracteristicas({ onComenzarClick }) {
         },
         {
             id: 6,
-            titulo: "Guardados y Favoritos",
+            titulo: "Favoritos",
             descripcion: "Crea listas personalizadas con tus sneakers preferidas. Accede a ellas cuando quieras.",
             icono: (
                 <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">

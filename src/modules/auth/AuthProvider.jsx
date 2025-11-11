@@ -51,6 +51,9 @@ export function AuthProvider({ children }) {
             if (error) {
                 console.error('Error al cerrar sesión:', error)
                 setError(error)
+            } else {
+                // Redirigir al home después de cerrar sesión
+                window.location.href = '/'
             }
         },
         signIn: async (email, password) => {
