@@ -61,14 +61,16 @@ const KickHeader = forwardRef((props, parentRef) => {
                         // Hay sesión - Mostrar iconos de perfil y cerrar sesión
                         <>
                             {/* Botón de perfil */}
-                            <button className="group relative p-3 bg-gray-900 hover:bg-gray-800 border-2 border-green-400 rounded-full
-                                transition-all duration-300 shadow-[0_0_15px_rgba(34,197,94,0.4)] hover:shadow-[0_0_25px_rgba(34,197,94,0.7)] hover:scale-110 active:scale-95"
-                                aria-label="Mi perfil" title={user?.email}
-                            >
-                                <svg className="w-6 h-6 text-green-400 group-hover:text-green-300 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                </svg>
-                            </button>
+                            <Link to="/myProfile">
+                                <button className="group relative p-3 bg-gray-900 hover:bg-gray-800 border-2 border-green-400 rounded-full
+                                    transition-all duration-300 shadow-[0_0_15px_rgba(34,197,94,0.4)] hover:shadow-[0_0_25px_rgba(34,197,94,0.7)] hover:scale-110 active:scale-95"
+                                    aria-label="Mi perfil" title={user?.email}
+                                >
+                                    <svg className="w-6 h-6 text-green-400 group-hover:text-green-300 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    </svg>
+                                </button>
+                            </Link>
 
                             {/* Botón de cerrar sesión */}
                             <button onClick={signOut}
