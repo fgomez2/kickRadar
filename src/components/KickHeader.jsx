@@ -7,6 +7,7 @@ const KickHeader = forwardRef((props, parentRef) => {
     const [menuAbierto, setMenuAbierto] = useState(false)
     const desktopInputRef = useRef(null)
     const movilInputRef = useRef(null)
+    const {isAuthenticated, user, signOut} = useAuth()
 
     // hacer focus en el input visible
     useImperativeHandle(parentRef, () => ({
@@ -25,7 +26,6 @@ const KickHeader = forwardRef((props, parentRef) => {
     }
 
     return (
-        // Mostrar el header Login/Registro si no hay usuario logueado
         <header className={`${estilosHeader.header} bg-black/95 backdrop-blur-sm py-3 sm:py-4 md:py-5 lg:py-8`}>
             <div className="container mx-auto px-4 flex items-center justify-between">
                 {/* Logo */}
@@ -36,7 +36,7 @@ const KickHeader = forwardRef((props, parentRef) => {
                     </span>
                     <img src="/images/logo_radar.png" alt="KickRadar Logo" className="h-10 sm:h-12 md:h-14 lg:h-16 xl:h-20 w-auto ml-2 sm:ml-3" />
                 </Link>
-                                                    
+
                 {/* Barra de busqueda - desktop */}
                 <div id='barra_busqueda' className="hidden lg:block">
                     <div className="relative">
@@ -47,40 +47,66 @@ const KickHeader = forwardRef((props, parentRef) => {
                         </div>
                         <input ref={desktopInputRef} type="text" placeholder="Buscar sneaker..."
                             className={`${estilosHeader.barraBusqueda} bg-gray-900 border-2 border-green-400 text-white pl-10 pr-4 py-2 rounded-full 
-                                     shadow-[0_0_10px_rgba(34,197,94,0.5)] 
-                                     hover:shadow-[0_0_15px_rgba(34,197,94,0.7)]
-                                     hover:border-green-300
-                                     focus:shadow-[0_0_20px_rgba(34,197,94,0.8)] 
-                                     focus:border-green-300 focus:outline-none 
-                                     placeholder-white/70 transition-all duration-300
-                                     w-80 md:w-96 lg:w-[28rem] xl:w-[32rem]`}
+                            shadow-[0_0_10px_rgba(34,197,94,0.5)] hover:shadow-[0_0_15px_rgba(34,197,94,0.7)] hover:border-green-300
+                            focus:shadow-[0_0_20px_rgba(34,197,94,0.8)] focus:border-green-300 focus:outline-none placeholder-white/70 transition-all duration-300 w-80 md:w-96 lg:w-[28rem] xl:w-[32rem]`}
                         />
-                        <div className="absolute inset-0 rounded-full border-2 border-green-400 
-                                      shadow-[inset_0_0_10px_rgba(34,197,94,0.3)] pointer-events-none">
+                        <div className="absolute inset-0 rounded-full border-2 border-green-400 shadow-[inset_0_0_10px_rgba(34,197,94,0.3)] pointer-events-none">
                         </div>
                     </div>
                 </div>
                 
                 {/* Botones de autenticación - desktop */}
-                <div className="hidden lg:flex items-center space-x-3">
-                    <Link to="/auth">
-                        <button className="bg-white hover:bg-gray-100 text-black px-4 py-2 rounded-full text-sm md:text-base font-medium transition-all duration-300 
-                                         shadow-[0_0_8px_rgba(255,255,255,0.3)] 
-                                         hover:shadow-[0_0_20px_rgba(255,255,255,0.6)] 
-                                         hover:scale-105 active:scale-95 
-                                         transform hover:-translate-y-0.5">
-                            Login
-                        </button>
-                    </Link>
-                    <Link to="/auth">
-                        <button className="bg-green-400 hover:bg-green-500 text-white px-4 py-2 rounded-full text-sm md:text-base font-medium transition-all duration-300 
-                                         shadow-[0_0_10px_rgba(34,197,94,0.4)] 
-                                         hover:shadow-[0_0_25px_rgba(34,197,94,0.8)] 
-                                         hover:scale-105 active:scale-95 
-                                         transform hover:-translate-y-0.5">
-                            Regístrate
-                        </button>
-                    </Link>
+                <div className="hidden lg:flex items-center gap-3">
+                    {isAuthenticated ? (
+                        // Hay sesión - Mostrar iconos de perfil y cerrar sesión
+                        <>
+                            {/* Botón de perfil */}
+                            <button 
+                                className="group relative p-3 bg-gray-900 hover:bg-gray-800 border-2 border-green-400 rounded-full
+                                transition-all duration-300 shadow-[0_0_15px_rgba(34,197,94,0.4)] hover:shadow-[0_0_25px_rgba(34,197,94,0.7)] hover:scale-110 active:scale-95"
+                                aria-label="Mi perfil" title={user?.email}
+                            >
+                                <svg className="w-6 h-6 text-green-400 group-hover:text-green-300 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                            </button>
+
+                            {/* Botón de cerrar sesión */}
+                            <button 
+                                onClick={signOut}
+                                className="group relative p-3 bg-gray-900 hover:bg-red-900/20 border-2 border-green-400 
+                                hover:border-red-400 rounded-full transition-all duration-300 
+                                shadow-[0_0_15px_rgba(34,197,94,0.4)] hover:shadow-[0_0_25px_rgba(239,68,68,0.6)] hover:scale-110 active:scale-95"
+                                aria-label="Cerrar sesión"
+                            >
+                                <svg className="w-6 h-6 text-green-400 group-hover:text-red-400 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                </svg>
+                                {/* Tooltip */}
+                                <span className="absolute -bottom-10 left-1/2 -translate-x-1/2 px-3 py-1 bg-gray-900 text-red-400 text-xs rounded-lg border border-red-400/50 whitespace-nowrap opacity-0 
+                                    group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                                    Cerrar sesión
+                                </span>
+                            </button>
+                        </>
+                    ) : (
+                        // No hay sesión
+                        <>
+                            <Link to="/auth">
+                                <button className="bg-white hover:bg-gray-100 text-black px-4 py-2 rounded-full text-sm md:text-base font-medium transition-all duration-300 
+                                        shadow-[0_0_8px_rgba(255,255,255,0.3)] hover:shadow-[0_0_20px_rgba(255,255,255,0.6)] hover:scale-105 active:scale-95 transform hover:-translate-y-0.5">
+                                    Login
+                                </button>
+                            </Link>
+                            <Link to="/auth">
+                                <button className="bg-green-400 hover:bg-green-500 text-white px-4 py-2 rounded-full text-sm md:text-base font-medium transition-all duration-300 
+                                        shadow-[0_0_10px_rgba(34,197,94,0.4)] hover:shadow-[0_0_25px_rgba(34,197,94,0.8)] 
+                                        hover:scale-105 active:scale-95 transform hover:-translate-y-0.5">
+                                    Regístrate
+                                </button>
+                            </Link>
+                        </>
+                    )}
                 </div>
 
                 {/* Botón hamburguesa - móvil y tablet */}
@@ -106,16 +132,10 @@ const KickHeader = forwardRef((props, parentRef) => {
                     </div>
                     <input ref={movilInputRef} type="text" placeholder="Buscar sneaker..."
                         className={`${estilosHeader.barraBusqueda} bg-gray-900 border-2 border-green-400 text-white pl-10 pr-4 py-2 rounded-full 
-                                 shadow-[0_0_10px_rgba(34,197,94,0.5)] 
-                                 hover:shadow-[0_0_15px_rgba(34,197,94,0.7)]
-                                 hover:border-green-300
-                                 focus:shadow-[0_0_20px_rgba(34,197,94,0.8)] 
-                                 focus:border-green-300 focus:outline-none 
-                                 placeholder-white/70 transition-all duration-300
-                                 w-full`}
+                        shadow-[0_0_10px_rgba(34,197,94,0.5)] hover:shadow-[0_0_15px_rgba(34,197,94,0.7)] hover:border-green-300
+                        focus:shadow-[0_0_20px_rgba(34,197,94,0.8)] focus:border-green-300 focus:outline-none placeholder-white/70 transition-all duration-300 w-full`}
                     />
-                    <div className="absolute inset-0 rounded-full border-2 border-green-400 
-                                  shadow-[inset_0_0_10px_rgba(34,197,94,0.3)] pointer-events-none">
+                    <div className="absolute inset-0 rounded-full border-2 border-green-400 shadow-[inset_0_0_10px_rgba(34,197,94,0.3)] pointer-events-none">
                     </div>
                 </div>
             </div>
@@ -124,24 +144,57 @@ const KickHeader = forwardRef((props, parentRef) => {
             {menuAbierto && (
                 <div className="lg:hidden mt-3 sm:mt-4 mx-3 sm:mx-4 md:mx-6 bg-gray-900 rounded-lg border border-gray-700 overflow-hidden animate-[slideDown_0.3s_ease-out]">
                     <div className="flex flex-col space-y-2 p-3 sm:p-4">
-                        <Link to="/auth">
-                            <button className="w-full bg-white hover:bg-gray-100 text-black px-4 py-3 rounded-full text-base font-medium transition-all duration-300 
-                                             shadow-[0_0_8px_rgba(255,255,255,0.3)] 
-                                             hover:shadow-[0_0_20px_rgba(255,255,255,0.6)] 
-                                             hover:scale-105 active:scale-95 
-                                             transform hover:-translate-y-0.5">
-                                Login
-                            </button>
-                        </Link>
-                        <Link to="/auth">
-                            <button className="w-full bg-green-400 hover:bg-green-500 text-white px-4 py-3 rounded-full text-base font-medium transition-all duration-300 
-                                             shadow-[0_0_10px_rgba(34,197,94,0.4)] 
-                                             hover:shadow-[0_0_25px_rgba(34,197,94,0.8)] 
-                                             hover:scale-105 active:scale-95 
-                                             transform hover:-translate-y-0.5">
-                                Regístrate
-                            </button>
-                        </Link>
+                        {isAuthenticated ? (
+                            // Hay sesión - Mostrar perfil y cerrar sesión
+                            <>
+                                {/* Info del usuario */}
+                                <div className="flex items-center gap-3 px-4 py-3 bg-gray-800 rounded-lg border border-green-400/30">
+                                    <div className="p-2 bg-gray-900 border-2 border-green-400 rounded-full
+                                                  shadow-[0_0_10px_rgba(34,197,94,0.4)]">
+                                        <svg className="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                                                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                        </svg>
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="text-sm text-gray-400">Sesión iniciada</p>
+                                        <p className="text-sm text-green-400 font-medium truncate">{user?.email}</p>
+                                    </div>
+                                </div>
+
+                                {/* Botón cerrar sesión */}
+                                <button 
+                                    onClick={signOut}
+                                    className="w-full flex items-center justify-center gap-2 bg-gray-900 hover:bg-red-900/20 
+                                             text-green-400 hover:text-red-400 px-4 py-3 rounded-full text-base font-medium 
+                                             transition-all duration-300 border-2 border-green-400 hover:border-red-400
+                                             shadow-[0_0_10px_rgba(34,197,94,0.4)] hover:shadow-[0_0_20px_rgba(239,68,68,0.6)] 
+                                             hover:scale-105 active:scale-95"
+                                >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                                              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                    </svg>
+                                    Cerrar sesión
+                                </button>
+                            </>
+                        ) : (
+                            // No hay sesión
+                            <>
+                                <Link to="/auth">
+                                    <button className="w-full bg-white hover:bg-gray-100 text-black px-4 py-3 rounded-full text-base font-medium transition-all duration-300 
+                                            shadow-[0_0_8px_rgba(255,255,255,0.3)] hover:shadow-[0_0_20px_rgba(255,255,255,0.6)] hover:scale-105 active:scale-95 transform hover:-translate-y-0.5">
+                                        Login
+                                    </button>
+                                </Link>
+                                <Link to="/auth">
+                                    <button className="w-full bg-green-400 hover:bg-green-500 text-white px-4 py-3 rounded-full text-base font-medium transition-all duration-300 
+                                            shadow-[0_0_10px_rgba(34,197,94,0.4)] hover:shadow-[0_0_25px_rgba(34,197,94,0.8)] hover:scale-105 active:scale-95 transform hover:-translate-y-0.5">
+                                        Regístrate
+                                    </button>
+                                </Link>
+                            </>
+                        )}
                     </div>
                 </div>
             )}
