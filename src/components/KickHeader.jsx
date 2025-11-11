@@ -1,9 +1,9 @@
 import { useState, forwardRef, useImperativeHandle, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import estilosHeader from './KickHeader.module.css'
+import { useAuth } from '../modules/auth/AuthProvider'
 
 const KickHeader = forwardRef((props, parentRef) => {
- 
     const [menuAbierto, setMenuAbierto] = useState(false)
     const desktopInputRef = useRef(null)
     const movilInputRef = useRef(null)
