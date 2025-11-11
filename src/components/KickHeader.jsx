@@ -61,8 +61,7 @@ const KickHeader = forwardRef((props, parentRef) => {
                         // Hay sesión - Mostrar iconos de perfil y cerrar sesión
                         <>
                             {/* Botón de perfil */}
-                            <button 
-                                className="group relative p-3 bg-gray-900 hover:bg-gray-800 border-2 border-green-400 rounded-full
+                            <button className="group relative p-3 bg-gray-900 hover:bg-gray-800 border-2 border-green-400 rounded-full
                                 transition-all duration-300 shadow-[0_0_15px_rgba(34,197,94,0.4)] hover:shadow-[0_0_25px_rgba(34,197,94,0.7)] hover:scale-110 active:scale-95"
                                 aria-label="Mi perfil" title={user?.email}
                             >
@@ -72,8 +71,7 @@ const KickHeader = forwardRef((props, parentRef) => {
                             </button>
 
                             {/* Botón de cerrar sesión */}
-                            <button 
-                                onClick={signOut}
+                            <button onClick={signOut}
                                 className="group relative p-3 bg-gray-900 hover:bg-red-900/20 border-2 border-green-400 
                                 hover:border-red-400 rounded-full transition-all duration-300 
                                 shadow-[0_0_15px_rgba(34,197,94,0.4)] hover:shadow-[0_0_25px_rgba(239,68,68,0.6)] hover:scale-110 active:scale-95"
@@ -110,9 +108,7 @@ const KickHeader = forwardRef((props, parentRef) => {
                 </div>
 
                 {/* Botón hamburguesa - móvil y tablet */}
-                <button 
-                    onClick={toggleMenu}
-                    className="lg:hidden text-white p-2 rounded-md hover:bg-gray-800 transition-colors duration-200"
+                <button onClick={toggleMenu} className="lg:hidden text-white p-2 rounded-md hover:bg-gray-800 transition-colors duration-200"
                     aria-label="Toggle menu"
                 >
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -149,11 +145,9 @@ const KickHeader = forwardRef((props, parentRef) => {
                             <>
                                 {/* Info del usuario */}
                                 <div className="flex items-center gap-3 px-4 py-3 bg-gray-800 rounded-lg border border-green-400/30">
-                                    <div className="p-2 bg-gray-900 border-2 border-green-400 rounded-full
-                                                  shadow-[0_0_10px_rgba(34,197,94,0.4)]">
+                                    <div className="p-2 bg-gray-900 border-2 border-green-400 rounded-full shadow-[0_0_10px_rgba(34,197,94,0.4)]">
                                         <svg className="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                                                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                         </svg>
                                     </div>
                                     <div className="flex-1">
@@ -166,14 +160,12 @@ const KickHeader = forwardRef((props, parentRef) => {
                                 <button 
                                     onClick={signOut}
                                     className="w-full flex items-center justify-center gap-2 bg-gray-900 hover:bg-red-900/20 
-                                             text-green-400 hover:text-red-400 px-4 py-3 rounded-full text-base font-medium 
-                                             transition-all duration-300 border-2 border-green-400 hover:border-red-400
-                                             shadow-[0_0_10px_rgba(34,197,94,0.4)] hover:shadow-[0_0_20px_rgba(239,68,68,0.6)] 
-                                             hover:scale-105 active:scale-95"
+                                    text-green-400 hover:text-red-400 px-4 py-3 rounded-full text-base font-medium 
+                                    transition-all duration-300 border-2 border-green-400 hover:border-red-400
+                                    shadow-[0_0_10px_rgba(34,197,94,0.4)] hover:shadow-[0_0_20px_rgba(239,68,68,0.6)] hover:scale-105 active:scale-95"
                                 >
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                                              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                                     </svg>
                                     Cerrar sesión
                                 </button>
