@@ -216,16 +216,14 @@ export default function MiPerfil() {
                                             </button>
 
                                             {/* Botón eliminar cuenta */}
-                                            <button 
-                                                onClick={() => setMostrarConfirmacion(true)}
+                                            <button onClick={() => setMostrarConfirmacion(true)}
                                                 className="group px-4 sm:px-6 py-2 sm:py-3 bg-gray-800/50 hover:bg-red-900/50 text-white font-semibold rounded-xl border-2 border-red-500/30 
                                                 hover:border-red-500 transition-all duration-300 shadow-[0_0_15px_rgba(239,68,68,0.1)] hover:shadow-[0_0_25px_rgba(239,68,68,0.4)]
                                                 hover:scale-105 active:scale-95 text-sm sm:text-base"
                                             >
                                                 <span className="flex items-center gap-2">
                                                     <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                                                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                     </svg>
                                                     Eliminar cuenta
                                                 </span>
@@ -257,7 +255,7 @@ export default function MiPerfil() {
                                                 />
                                             </div>
 
-                                            {/* Email (solo lectura) */}
+                                            {/* Email (solo lectura, no se podrá cambiar) */}
                                             <div className="md:col-span-2">
                                                 <label className="block text-sm font-semibold text-gray-300 mb-2">
                                                     <div className="flex items-center gap-2">
@@ -268,20 +266,13 @@ export default function MiPerfil() {
                                                         <span className="text-xs text-gray-500">(no editable)</span>
                                                     </div>
                                                 </label>
-                                                <input
-                                                    type="email"
-                                                    value={user?.email || ''}
-                                                    disabled
-                                                    className="w-full px-4 py-3.5 bg-gray-800/30 border-2 border-gray-700/50 rounded-xl text-gray-500 cursor-not-allowed backdrop-blur-sm"
-                                                />
+                                                <input type="email" value={user?.email || ''} disabled className="w-full px-4 py-3.5 bg-gray-800/30 border-2 border-gray-700/50 rounded-xl text-gray-500 cursor-not-allowed backdrop-blur-sm" />
                                             </div>
                                         </div>
 
                                         {/* Botones de acción */}
                                         <div className="flex flex-col sm:flex-row gap-3 pt-4">
-                                            <button
-                                                type="submit"
-                                                disabled={guardando}
+                                            <button type="submit" disabled={guardando}
                                                 className="group relative flex-1 px-6 py-3.5 bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white font-bold rounded-xl
                                                 transition-all duration-300 shadow-[0_0_25px_rgba(34,197,94,0.35)] hover:shadow-[0_0_40px_rgba(34,197,94,0.6)] hover:scale-105 active:scale-95
                                                 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 overflow-hidden"
@@ -385,14 +376,13 @@ export default function MiPerfil() {
                                     </div>
                                 )}
 
-                                {/* Mensaje de feedback */}
+                                {/* Info acción */}
                                 {mensaje && (
                                     <div className={`mt-6 p-4 rounded-xl text-sm font-medium backdrop-blur-sm border-2 animate-[slideDown_0.3s_ease-out] 
                                             ${tipoMensaje === 'error' 
                                                 ? 'bg-red-900/30 border-red-500/50 text-red-200 shadow-[0_0_20px_rgba(239,68,68,0.3)]' 
                                                 : 'bg-green-900/30 border-green-500/50 text-green-200 shadow-[0_0_20px_rgba(34,197,94,0.3)]'
-                                        }`}
-                                        role="alert"
+                                        }`} role="alert"
                                     >
                                         <div className="flex items-start gap-3">
                                             {tipoMensaje === 'error' ? (
@@ -426,18 +416,15 @@ export default function MiPerfil() {
                                     </div>
                                 </div>
 
-                                {/* Título */}
                                 <h3 className="text-2xl font-bold text-white text-center mb-3">
                                     ¿Eliminar cuenta?
                                 </h3>
 
-                                {/* Descripción */}
                                 <p className="text-gray-300 text-center mb-6">
                                     Esta acción es <span className="text-red-500 font-semibold">irreversible</span>. 
                                     Se eliminarán todos tus datos y no podrás recuperar tu cuenta.
                                 </p>
 
-                                {/* Botones */}
                                 <div className="flex flex-col sm:flex-row gap-3">
                                     <button onClick={() => setMostrarConfirmacion(false)} disabled={eliminando}
                                         className="flex-1 px-6 py-3 bg-gray-800/50 hover:bg-gray-700 text-white font-semibold rounded-xl border-2 border-gray-600 hover:border-gray-500 transition-all duration-300 
