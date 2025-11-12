@@ -118,17 +118,13 @@ export default function MiPerfil() {
             // Llamar a la función RPC supabase (ELIMINA CUENTA CUIDADO)
             const { data, error } = await supabase.rpc('delete_user_account')
 
-            console.log('Respuesta completa de RPC:', { data, error })
-
             if (error) {
                 console.error('Error de Supabase:', error)
-                alert(`Error al eliminar la cuenta: ${error.message}`)
                 return
             }
 
             if (data && data.success === false) {
                 console.error('Error en la función:', data.message)
-                alert(data.message || 'Error al eliminar la cuenta')
                 return
             }
 
