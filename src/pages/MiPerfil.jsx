@@ -114,22 +114,35 @@ export default function MiPerfil() {
     const handleEliminarCuenta = async () => {
         try {
             setEliminando(true)
-            
-            // Primero eliminar el perfil de la tabla profiles
-            const { error: profileError } = await supabase.from('profiles').delete().eq('id', user.id)
 
-            if (profileError) throw profileError
+            // Llamar a la función RPC supabase (ELIMINA CUENTA CUIDADO)
+            const { data, error } = await supabase.rpc('delete_user_account')
 
-            // Luego eliminar el usuario de auth (requiere privilegios admin o función RPC)
-            // Como alternativa, cerramos sesión y mostramos mensaje
+            console.log('Respuesta completa de RPC:', { data, error })
+
+            if (error) {
+                console.error('Error de Supabase:', error)
+                alert(`Error al eliminar la cuenta: ${error.message}`)
+                return
+            }
+
+            if (data && data.success === false) {
+                console.error('Error en la función:', data.message)
+                alert(data.message || 'Error al eliminar la cuenta')
+                return
+            }
+
+            console.log('Cuenta eliminada exitosamente')
+
+            // Cerrar sesión (redirige automáticamente al login)
             await supabase.auth.signOut()
-            
             navigate('/auth')
         } catch (error) {
-            console.error('Error al eliminar cuenta:', error)
-            setTipoMensaje('error')
-            setMensaje('Error al eliminar la cuenta. Por favor, vuelve a intentarlo más tarde.')
+            console.error('Error inesperado:', error)
+            alert('Error inesperado al eliminar la cuenta')
+        } finally {
             setEliminando(false)
+            setMostrarConfirmacion(false)
         }
     }
 
