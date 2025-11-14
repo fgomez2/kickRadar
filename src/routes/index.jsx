@@ -3,6 +3,7 @@ import Home from '../pages/Home'
 import AuthPage from '../pages/AuthPage'
 import NotFound from '../pages/NotFound'
 import MiPerfil from '../pages/MiPerfil'
+import MisFavoritos from '../pages/MisFavoritos'
 
 export default function AppRoutes() {
     return (
@@ -16,6 +17,8 @@ export default function AppRoutes() {
             {/* Rutas protegidas */}
             {/* Ruta de perfil */}
             <Route path="/miPerfil" element={<MiPerfil />} />
+            {/* Ruta de favoritos */}
+            <Route path="/misFavoritos" element={<MisFavoritos />} />
 
             {/* Rutas públicas */}
             {/* <Route path="/sobrenosotros" element={<SobreNosotros />} />
