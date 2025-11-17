@@ -4,6 +4,7 @@ import AuthPage from '../pages/AuthPage'
 import NotFound from '../pages/NotFound'
 import MiPerfil from '../pages/MiPerfil'
 import MisFavoritos from '../pages/MisFavoritos'
+import Callback from '../pages/Callback'
 
 export default function AppRoutes() {
     return (
@@ -21,7 +22,10 @@ export default function AppRoutes() {
             <Route path="/misFavoritos" element={<MisFavoritos />} />
 
             {/* Rutas públicas */}
-            {/* <Route path="/sobrenosotros" element={<SobreNosotros />} />
+            {/* Ruta callback OAuth */}
+            <Route path="/callback" element={<Callback />} />
+            
+            {/* /* <Route path="/sobrenosotros" element={<SobreNosotros />} /> */}
 
             {/* Ruta error 404 not found */}
             <Route path="*" element={<NotFound />} /> {/* SIEMPRE AL FINAL */}
