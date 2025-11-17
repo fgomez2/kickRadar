@@ -5,7 +5,7 @@ import { useAuth } from '../modules/auth/AuthProvider'
 import KickHeaderAuth from '../components/KickHeaderAuth'
 
 export default function AuthPage() {
-    const { session } = useAuth()
+    const { sesion } = useAuth()
     const navigate = useNavigate()
 
     const [modo, setModo] = useState('login') // 'login' o 'registro'
@@ -20,10 +20,10 @@ export default function AuthPage() {
 
     // Si ya hay sesión, se redirije a la pag principal
     useEffect(() => {
-        if (session) {
+        if (sesion) {
             navigate('/')
         }
-    }, [session, navigate])
+    }, [sesion, navigate])
 
     // Errores coumunes de Supabase
     const getErrorMessage = (error) => {
@@ -127,7 +127,7 @@ export default function AuthPage() {
     }
 
     // Si ya hay sesión NO RENDERIZAR NADA
-    if (session) return null
+    if (sesion) return null
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black flex flex-col">

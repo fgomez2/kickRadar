@@ -6,7 +6,7 @@ import KickHeader from "../components/KickHeader"
 import KickFooter from "../components/KickFooter"
 
 export default function MiPerfil() {
-    const { user, isAuthenticated } = useAuth()
+    const { usuario, estaAutenticado } = useAuth()
     const navigate = useNavigate()
     
     const [perfil, setPerfil] = useState(null)
@@ -23,19 +23,19 @@ export default function MiPerfil() {
 
     // Redirigir si no está autenticado
     useEffect(() => {
-        if (!isAuthenticated) {
+        if (!estaAutenticado) {
             navigate('/auth')
         }
-    }, [isAuthenticated, navigate])
+    }, [estaAutenticado, navigate])
 
     // Cargar datos del perfil
     useEffect(() => {
         const cargarPerfil = async () => {
-            if (!user) return
+            if (!usuario) return
 
             try {
                 setCargando(true)
-                const { data, error } = await supabase.from('profiles').select('*').eq('id', user.id).single()
+                const { data, error } = await supabase.from('profiles').select('*').eq('id', usuario.id).single()
 
                 if (error) throw error
 
@@ -51,7 +51,7 @@ export default function MiPerfil() {
         }
 
         cargarPerfil()
-    }, [user])
+    }, [usuario])
 
     const handleGuardar = async (e) => {
         e.preventDefault()
@@ -88,7 +88,7 @@ export default function MiPerfil() {
                 return
             }
 
-            const { error } = await supabase.from('profiles').update({ full_name: nombreCompleto }).eq('id', user.id)
+            const { error } = await supabase.from('profiles').update({ full_name: nombreCompleto }).eq('id', usuario.id)
 
             if (error) throw error
 
@@ -142,7 +142,7 @@ export default function MiPerfil() {
         }
     }
 
-    if (!isAuthenticated) return null
+    if (!estaAutenticado) return null
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black flex flex-col">
@@ -199,11 +199,11 @@ export default function MiPerfil() {
 
                                     {/* Info básica */}
                                     <div className="flex-1 text-center sm:text-left">
-                                        <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+                                        <p className="text-2xl sm:text-3xl font-bold text-white mb-2">
                                             {perfil?.full_name || 'Usuario'}
-                                        </h2>
+                                        </p>
                                         <p className="text-gray-400 text-sm sm:text-base mb-3 break-all">
-                                            {user?.email}
+                                            {usuario?.email}
                                         </p>
                                     </div>
 
@@ -275,7 +275,7 @@ export default function MiPerfil() {
                                                         <span className="text-xs text-gray-500">(no editable)</span>
                                                     </div>
                                                 </label>
-                                                <input type="email" value={user?.email || ''} disabled className="w-full px-4 py-3.5 bg-gray-800/30 border-2 border-gray-700/50 rounded-xl text-gray-500 cursor-not-allowed backdrop-blur-sm" />
+                                                <input type="email" value={usuario?.email || ''} disabled className="w-full px-4 py-3.5 bg-gray-800/30 border-2 border-gray-700/50 rounded-xl text-gray-500 cursor-not-allowed backdrop-blur-sm" />
                                             </div>
                                         </div>
 
@@ -343,7 +343,7 @@ export default function MiPerfil() {
                                                     </div>
                                                     <div className="flex-1 min-w-0">
                                                         <p className="text-xs text-gray-500">Correo electrónico</p>
-                                                        <p className="text-white font-medium truncate">{user?.email}</p>
+                                                        <p className="text-white font-medium truncate">{usuario?.email}</p>
                                                     </div>
                                                 </div>
                                             </div>

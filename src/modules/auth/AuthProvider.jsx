@@ -2,16 +2,43 @@ import { createContext, useContext, useEffect, useState, useMemo } from 'react'
 import { supabase } from '../../supabase-client'
 
 const AuthContext = createContext({ 
-    session: null, 
-    user: null, 
-    loading: true
+    sesion: null, 
+    usuario: null, 
+    cargando: true
 })
 
 export function AuthProvider({ children }) {
-    const [session, setSession] = useState(null)
-    const [loading, setLoading] = useState(true)
+    const [sesion, setSesion] = useState(null)
+    const [cargando, setCargando] = useState(true)
     const [error, setError] = useState(null)
     const [cerrandoSesion, setCerrandoSesion] = useState(false) // estado loader cierre de sesión
+    const [perfil, setPerfil] = useState(null) // perfil del usuario 
+
+    // Obtener el perfil del usuario
+    const obtenerPerfil = async (idUsuario) => {
+        if (!idUsuario) {
+            setPerfil(null)
+            return
+        }
+
+        try {
+            const { data, error } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', idUsuario)
+                .single()
+
+            if (error) {
+                console.error('Error al obtener el perfil:', error)
+                setPerfil(null)
+            } else {
+                setPerfil(data)
+            }
+        } catch (err) {
+            console.error('Error inesperado al obtener perfil:', err)
+            setPerfil(null)
+        }
+    }
 
     useEffect(() => {
         // Cargar la sesión actual al montar el componente
@@ -21,34 +48,47 @@ export function AuthProvider({ children }) {
                     console.error('Error al obtener la sesión:', error)
                     setError(error)
                 }
-                setSession(data.session ?? null)
+                setSesion(data.session ?? null)
+                
+                // Cargar perfil si hay sesión
+                if (data.session?.user?.id) {
+                    obtenerPerfil(data.session.user.id)
+                }
             })
             .catch((err) => {
                 console.error('Error inesperado:', err)
                 setError(err)
             })
             .finally(() => {
-                setLoading(false)
+                setCargando(false)
             })
 
         // Suscribirse a los cambios de autenticación
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, newSession) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, nuevaSesion) => {
             console.log('Evento de autenticación:', event)
-            setSession(newSession ?? null)
+            setSesion(nuevaSesion ?? null)
             setError(null) // Limpio errores en cada cambio de auth
+            
+            // Cargar perfil cuando cambia la sesión
+            if (nuevaSesion?.user?.id) {
+                obtenerPerfil(nuevaSesion.user.id)
+            } else {
+                setPerfil(null)
+            }
         })
 
         return () => subscription.unsubscribe()
     }, [])
 
     const value = useMemo(() => ({
-        session,
-        user: session?.user ?? null,
-        loading,
+        sesion,
+        usuario: sesion?.user ?? null,
+        perfil,
+        cargando,
         error,
-        isAuthenticated: !!session,
+        estaAutenticado: !!sesion,
         cerrandoSesion,
-        signOut: async () => {
+        cerrarSesion: async () => {
             setCerrandoSesion(true)
             
             // Esperar 1.5 segundos para mostrar el loader
@@ -64,22 +104,21 @@ export function AuthProvider({ children }) {
                 window.location.href = '/'
             }
         },
-        signIn: async (email, password) => {
+        iniciarSesion: async (email, password) => {
             const { data, error} = await supabase.auth.signInWithPassword({ email, password })
             if (error) {
                 setError(error)
-                setIniciandoSesion(false)
             }
             return { data, error }
         },
-        signUp: async (email, password) => {
+        registrarse: async (email, password) => {
             const { data, error } = await supabase.auth.signUp({ email, password })
             if (error) {
                 setError(error)
             }
             return { data, error }
         }
-    }), [session, loading, error, cerrandoSesion])
+    }), [sesion, cargando, error, cerrandoSesion, perfil])
 
     return (
         <AuthContext.Provider value={value}>

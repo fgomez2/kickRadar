@@ -2,12 +2,26 @@ import { useState, forwardRef, useImperativeHandle, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import estilosHeader from './KickHeader.module.css'
 import { useAuth } from '../modules/auth/AuthProvider'
+import { supabase } from '../supabase-client'
 
 const KickHeader = forwardRef((props, parentRef) => {
     const [menuAbierto, setMenuAbierto] = useState(false)
     const desktopInputRef = useRef(null)
     const movilInputRef = useRef(null)
-    const {isAuthenticated, user, signOut} = useAuth()
+    const {estaAutenticado, usuario, perfil, cerrarSesion} = useAuth()
+
+    // obtener la URL del avatar
+    const getAvatarUrl = () => {
+        if (!perfil?.avatar_key) return null
+        
+        const { data } = supabase.storage
+            .from('avatars')
+            .getPublicUrl(perfil.avatar_key)
+        
+        return data.publicUrl
+    }
+
+    const avatarUrl = getAvatarUrl()
 
     // hacer focus en el input visible
     useImperativeHandle(parentRef, () => ({
@@ -57,18 +71,29 @@ const KickHeader = forwardRef((props, parentRef) => {
                 
                 {/* Botones de autenticación - desktop */}
                 <div className="hidden lg:flex items-center gap-3">
-                    {isAuthenticated ? (
+                    {estaAutenticado ? (
                         // Hay sesión - Mostrar iconos de perfil y cerrar sesión
                         <>
                             {/* Botón de perfil */}
                             <Link to="/miPerfil">
-                                <button className="group relative p-3 bg-gray-900 hover:bg-gray-800 border-2 border-green-400 rounded-full
+                                <button className="group relative p-0.5 bg-gradient-to-br from-green-400 to-green-600 hover:from-green-300 hover:to-green-500 rounded-full
                                     transition-all duration-300 shadow-[0_0_15px_rgba(34,197,94,0.4)] hover:shadow-[0_0_25px_rgba(34,197,94,0.7)] hover:scale-110 active:scale-95"
-                                    aria-label="Mi perfil" title={user?.email}
+                                    aria-label="Mi perfil" title={usuario?.email}
                                 >
-                                    <svg className="w-6 h-6 text-green-400 group-hover:text-green-300 transition-colors duration-300 group-hover:fill-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                    </svg>
+                                    {avatarUrl ? (
+                                        <img src={avatarUrl} alt="Avatar" className="w-11 h-11 rounded-full object-cover border-2 border-gray-900"
+                                            onError={(e) => {
+                                                // Si la imagen falla, mostrar icono por defecto
+                                                e.target.style.display = 'none'
+                                                e.target.nextSibling.style.display = 'flex'
+                                            }}
+                                        />
+                                    ) : null}
+                                    <div className={`w-11 h-11 bg-gray-900 rounded-full flex items-center justify-center ${avatarUrl ? 'hidden' : 'flex'}`}>
+                                        <svg className="w-6 h-6 text-green-400 group-hover:text-green-300 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                        </svg>
+                                    </div>
                                 </button>
                             </Link>
 
@@ -87,7 +112,7 @@ const KickHeader = forwardRef((props, parentRef) => {
                             </Link>
 
                             {/* Botón de cerrar sesión */}
-                            <button onClick={signOut}
+                            <button onClick={cerrarSesion}
                                 className="group relative p-3 bg-gray-900 hover:bg-red-900/20 border-2 border-green-400 
                                 hover:border-red-400 rounded-full transition-all duration-300 
                                 shadow-[0_0_15px_rgba(34,197,94,0.4)] hover:shadow-[0_0_25px_rgba(239,68,68,0.6)] hover:scale-110 active:scale-95"
@@ -151,25 +176,37 @@ const KickHeader = forwardRef((props, parentRef) => {
             {menuAbierto && (
                 <div className="lg:hidden mt-3 sm:mt-4 mx-3 sm:mx-4 md:mx-6 bg-gray-900 rounded-lg border border-gray-700 overflow-hidden animate-[slideDown_0.3s_ease-out]">
                     <div className="flex flex-col space-y-2 p-3 sm:p-4">
-                        {isAuthenticated ? (
+                        {estaAutenticado ? (
                             // Hay sesión - Mostrar perfil y cerrar sesión
                             <>
                                 {/* Info del usuario */}
                                 <div className="flex items-center gap-3 px-4 py-3 bg-gray-800 rounded-lg border border-green-400/30">
-                                    <div className="p-2 bg-gray-900 border-2 border-green-400 rounded-full shadow-[0_0_10px_rgba(34,197,94,0.4)]">
-                                        <svg className="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                        </svg>
+                                    <div className="p-0.5 bg-gradient-to-br from-green-400 to-green-600 rounded-full shadow-[0_0_10px_rgba(34,197,94,0.4)]">
+                                        {avatarUrl ? (
+                                            <Link to="/miPerfil">
+                                                <img src={avatarUrl} alt="avatar" className="w-10 h-10 rounded-full object-cover border-2 border-gray-900"
+                                                    onError={(e) => {
+                                                        e.target.style.display = 'none'
+                                                        e.target.nextSibling.style.display = 'flex'
+                                                    }}
+                                                />
+                                            </Link>
+                                        ) : null}
+                                        <div className={`w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center ${avatarUrl ? 'hidden' : 'flex'}`}>
+                                            <svg className="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                            </svg>
+                                        </div>
                                     </div>
                                     <div className="flex-1">
                                         <p className="text-sm text-gray-400">Sesión iniciada</p>
-                                        <p className="text-sm text-green-400 font-medium truncate">{user?.email}</p>
+                                        <p className="text-sm text-green-400 font-medium truncate">{usuario?.email}</p>
                                     </div>
                                 </div>
 
                                 {/* Botón cerrar sesión */}
                                 <button 
-                                    onClick={signOut}
+                                    onClick={cerrarSesion}
                                     className="w-full flex items-center justify-center gap-2 bg-gray-900 hover:bg-red-900/20 
                                     text-green-400 hover:text-red-400 px-4 py-3 rounded-full text-base font-medium 
                                     transition-all duration-300 border-2 border-green-400 hover:border-red-400
