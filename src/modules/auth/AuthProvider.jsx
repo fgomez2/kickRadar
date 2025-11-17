@@ -88,6 +88,11 @@ export function AuthProvider({ children }) {
         error,
         estaAutenticado: !!sesion,
         cerrandoSesion,
+        refrescarPerfil: async () => {
+            if (sesion?.user?.id) {
+                await obtenerPerfil(sesion.user.id)
+            }
+        },
         cerrarSesion: async () => {
             setCerrandoSesion(true)
             
