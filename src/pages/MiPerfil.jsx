@@ -6,13 +6,27 @@ import KickHeader from "../components/KickHeader"
 import KickFooter from "../components/KickFooter"
 
 export default function MiPerfil() {
-    const { user, isAuthenticated } = useAuth()
+    const { usuario, estaAutenticado, refrescarPerfil } = useAuth()
     const navigate = useNavigate()
     
     const [perfil, setPerfil] = useState(null)
     const [cargando, setCargando] = useState(true)
     const [editando, setEditando] = useState(false)
     const [guardando, setGuardando] = useState(false)
+
+    // Estados edición avatar
+    const [editandoAvatar, setEditandoAvatar] = useState(false)
+    const [avatarSeleccionado, setAvatarSeleccionado] = useState(null)
+    const [guardandoAvatar, setGuardandoAvatar] = useState(false)
+    
+    // Lista de avatares disponibles en el bucket
+    const avataresDisponibles = [
+        'sneakimg-1.png',
+        'sneakimg-2.png',
+        'sneakimg-3.png',
+        'sneakimg-4.png',
+        'sneakimg-5.png'
+    ]
     
     // Estados del formulario
     const [nombreCompleto, setNombreCompleto] = useState('')
@@ -21,21 +35,88 @@ export default function MiPerfil() {
     const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false)
     const [eliminando, setEliminando] = useState(false)
 
+    // obtener la url del avatar (LUEGO CAMBIAR ESTA FUNCIÓN PARA QUE SE PUEDA ACCEDER DESDE CUALQUIER PARTE)
+    const getAvatarUrl = () => {
+        if (!perfil?.avatar_key) return null
+
+        const { data } = supabase.storage.from('avatars').getPublicUrl(perfil.avatar_key)
+        return data.publicUrl
+    }
+
+    const avatarUrl = getAvatarUrl()
+
+    // Función para cambiar avatar
+    const handleCambiarAvatar = async () => {
+        if (!avatarSeleccionado) {
+            setTipoMensaje('error')
+            setMensaje('Por favor, selecciona un avatar')
+            return
+        }
+
+        try {
+            setGuardandoAvatar(true)
+            setMensaje(null) // Limpiar mensajes previos
+
+            // Usar la función RPC en lugar de UPDATE directo
+            const { data, error } = await supabase.rpc('update_user_avatar', { 
+                new_avatar_key: avatarSeleccionado
+            })
+
+            if (error) {
+                console.error('Error al cambiar avatar:', error)
+                throw error
+            }
+
+            if (data && data.success === false) {
+                throw new Error(data.message)
+            }
+
+            // Actualizar el estado local
+            setPerfil({ ...perfil, avatar_key: avatarSeleccionado })
+            
+            // Refrescar el perfil global del AuthProvider para actualizar el header
+            await refrescarPerfil()
+            
+            setTipoMensaje('exito')
+            setMensaje('¡Avatar actualizado correctamente!')
+            
+            // Esperar un momento para que se vea el mensaje y cerrar el modal
+            setTimeout(() => {
+                setEditandoAvatar(false)
+                setAvatarSeleccionado(null)
+                setGuardandoAvatar(false)
+            }, 800)
+        } catch (error) {
+            console.error('Error al cambiar avatar:', error)
+            setGuardandoAvatar(false)
+            setEditandoAvatar(false)
+            setAvatarSeleccionado(null)
+            setTipoMensaje('error')
+            setMensaje('Error al cambiar el avatar, inténtalo de nuevo más tarde.')
+        }
+    }
+
+    // Obtener URL de avatar desde la lista
+    const obtenerUrlAvatar = (nombreAvatar) => {
+        const { data } = supabase.storage.from('avatars').getPublicUrl(nombreAvatar)
+        return data.publicUrl
+    }
+
     // Redirigir si no está autenticado
     useEffect(() => {
-        if (!isAuthenticated) {
+        if (!estaAutenticado) {
             navigate('/auth')
         }
-    }, [isAuthenticated, navigate])
+    }, [estaAutenticado, navigate])
 
     // Cargar datos del perfil
     useEffect(() => {
         const cargarPerfil = async () => {
-            if (!user) return
+            if (!usuario) return
 
             try {
                 setCargando(true)
-                const { data, error } = await supabase.from('profiles').select('*').eq('id', user.id).single()
+                const { data, error } = await supabase.from('profiles').select('*').eq('id', usuario.id).single()
 
                 if (error) throw error
 
@@ -51,7 +132,7 @@ export default function MiPerfil() {
         }
 
         cargarPerfil()
-    }, [user])
+    }, [usuario])
 
     const handleGuardar = async (e) => {
         e.preventDefault()
@@ -88,7 +169,7 @@ export default function MiPerfil() {
                 return
             }
 
-            const { error } = await supabase.from('profiles').update({ full_name: nombreCompleto }).eq('id', user.id)
+            const { error } = await supabase.from('profiles').update({ full_name: nombreCompleto }).eq('id', usuario.id)
 
             if (error) throw error
 
@@ -142,7 +223,7 @@ export default function MiPerfil() {
         }
     }
 
-    if (!isAuthenticated) return null
+    if (!estaAutenticado) return null
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black flex flex-col">
@@ -183,14 +264,21 @@ export default function MiPerfil() {
                                 <div className="flex flex-col sm:flex-row items-center gap-6 mb-8 pb-8 border-b border-gray-700">
                                     {/* Avatar */}
                                     <div className="relative group">
-                                        <div className="w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center 
-                                            shadow-[0_0_30px_rgba(34,197,94,0.4)] group-hover:shadow-[0_0_40px_rgba(34,197,94,0.6)] transition-all duration-300 group-hover:scale-105">
-                                            <svg className="w-12 h-12 sm:w-16 sm:h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                            </svg>
+                                        <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full flex items-center justify-center overflow-hidden
+                                            shadow-[0_0_30px_rgba(34,197,94,0.4)] group-hover:shadow-[0_0_40px_rgba(34,197,94,0.6)] transition-all duration-300 group-hover:scale-105
+                                            bg-gradient-to-br from-green-400 to-green-600 p-0.5">
+                                            {avatarUrl ? (
+                                                <img src={avatarUrl} alt="Avatar usuario" className="w-full h-full rounded-full object-cover bg-gray-900"
+                                                />
+                                            ) : null}
+                                            <div className={`w-full h-full bg-gray-900 rounded-full flex items-center justify-center ${avatarUrl ? 'hidden' : 'flex'}`}>
+                                                <svg className="w-10 h-10 sm:w-14 sm:h-14 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                </svg>
+                                            </div>
                                         </div>
                                         {/* Boton de edición de AVATAR */}
-                                        <button className="absolute -bottom-2 -right-2 bg-gray-800 border-2 border-green-400/50 rounded-full p-2 shadow-[0_0_15px_rgba(34,197,94,0.5)]">
+                                        <button onClick={() => setEditandoAvatar(true)} className="absolute -bottom-2 -right-2 bg-gray-800 border-2 border-green-400/50 rounded-full p-2 shadow-[0_0_15px_rgba(34,197,94,0.5)]">
                                             <svg className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                             </svg>
@@ -199,11 +287,11 @@ export default function MiPerfil() {
 
                                     {/* Info básica */}
                                     <div className="flex-1 text-center sm:text-left">
-                                        <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+                                        <p className="text-2xl sm:text-3xl font-bold text-white mb-2">
                                             {perfil?.full_name || 'Usuario'}
-                                        </h2>
+                                        </p>
                                         <p className="text-gray-400 text-sm sm:text-base mb-3 break-all">
-                                            {user?.email}
+                                            {usuario?.email}
                                         </p>
                                     </div>
 
@@ -275,7 +363,7 @@ export default function MiPerfil() {
                                                         <span className="text-xs text-gray-500">(no editable)</span>
                                                     </div>
                                                 </label>
-                                                <input type="email" value={user?.email || ''} disabled className="w-full px-4 py-3.5 bg-gray-800/30 border-2 border-gray-700/50 rounded-xl text-gray-500 cursor-not-allowed backdrop-blur-sm" />
+                                                <input type="email" value={usuario?.email || ''} disabled className="w-full px-4 py-3.5 bg-gray-800/30 border-2 border-gray-700/50 rounded-xl text-gray-500 cursor-not-allowed backdrop-blur-sm" />
                                             </div>
                                         </div>
 
@@ -343,7 +431,7 @@ export default function MiPerfil() {
                                                     </div>
                                                     <div className="flex-1 min-w-0">
                                                         <p className="text-xs text-gray-500">Correo electrónico</p>
-                                                        <p className="text-white font-medium truncate">{user?.email}</p>
+                                                        <p className="text-white font-medium truncate">{usuario?.email}</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -409,6 +497,80 @@ export default function MiPerfil() {
                                 )}
                             </div>
                         </div>
+                    )}
+
+                    {/* Modal de edición de avatar */}
+                    {editandoAvatar && (
+                        <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
+                            <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl border-2 border-green-500/50 
+                                shadow-[0_0_60px_rgba(34,197,94,0.4)] p-6 sm:p-8 max-w-2xl w-full animate-[slideDown_0.3s_ease-out]">
+                            
+                            <h3 className="text-2xl font-bold text-white text-center mb-3">
+                                Cambiar avatar
+                            </h3>
+
+                            <p className="text-gray-300 text-center mb-6">
+                                Selecciona tu avatar favorito
+                            </p>
+
+                            {/* Galería de avatares */}
+                            <div className="grid grid-cols-3 sm:grid-cols-5 gap-4 mb-6">
+                                {avataresDisponibles.map((avatar) => (
+                                    <button key={avatar} onClick={() => setAvatarSeleccionado(avatar)}
+                                        className={`relative group rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95
+                                            ${avatarSeleccionado === avatar 
+                                                ? 'ring-4 ring-green-400 shadow-[0_0_30px_rgba(34,197,94,0.6)]' 
+                                                : 'ring-2 ring-gray-600 hover:ring-green-400/50'
+                                            }`}
+                                    >
+                                        <img src={obtenerUrlAvatar(avatar)} alt={`Avatar ${avatar}`} className="w-full h-full aspect-square object-cover" />
+                                        {avatarSeleccionado === avatar && (
+                                            <div className="absolute inset-0 bg-green-400/20 flex items-center justify-center">
+                                                <svg className="w-8 h-8 text-white drop-shadow-lg" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                                </svg>
+                                            </div>
+                                        )}
+                                    </button>
+                                ))}
+                            </div>
+
+                            {/* Botones de acción */}
+                            <div className="flex flex-col sm:flex-row gap-3">
+                                <button onClick={handleCambiarAvatar}
+                                    disabled={!avatarSeleccionado || guardandoAvatar}
+                                    className="flex-1 px-6 py-3 bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 
+                                    text-white font-bold rounded-xl text-center transition-all duration-300 
+                                    shadow-[0_0_25px_rgba(34,197,94,0.4)] hover:shadow-[0_0_40px_rgba(34,197,94,0.6)] 
+                                    hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                                >
+                                    {guardandoAvatar ? (
+                                        <span className="flex items-center justify-center gap-2">
+                                            <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                            Guardando...
+                                        </span>
+                                    ) : (
+                                        'Guardar cambios'
+                                    )}
+                                </button>
+
+                                <button onClick={() => {
+                                            setEditandoAvatar(false)
+                                            setAvatarSeleccionado(null)
+                                        }}
+                                    disabled={guardandoAvatar}
+                                    className="flex-1 px-6 py-3 bg-gray-800/50 hover:bg-gray-700 text-white font-semibold rounded-xl border-2 border-gray-600
+                                        hover:border-gray-500 transition-all duration-300 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    Cancelar
+                                </button>
+                            </div>
+                            </div>
+                        </div>
+                        
                     )}
 
                     {/* Modal de confirmación de eliminación */}
