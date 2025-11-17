@@ -21,6 +21,16 @@ export default function MiPerfil() {
     const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false)
     const [eliminando, setEliminando] = useState(false)
 
+    // obtener la url del avatar (LUEGO CAMBIAR ESTA FUNCIÓN PARA QUE SE PUEDA ACCEDER DESDE CUALQUIER PARTE)
+    const getAvatarUrl = () => {
+        if (!perfil?.avatar_key) return null
+
+        const { data } = supabase.storage.from('avatars').getPublicUrl(perfil.avatar_key)
+        return data.publicUrl
+    }
+
+    const avatarUrl = getAvatarUrl()
+
     // Redirigir si no está autenticado
     useEffect(() => {
         if (!estaAutenticado) {
@@ -183,11 +193,18 @@ export default function MiPerfil() {
                                 <div className="flex flex-col sm:flex-row items-center gap-6 mb-8 pb-8 border-b border-gray-700">
                                     {/* Avatar */}
                                     <div className="relative group">
-                                        <div className="w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center 
-                                            shadow-[0_0_30px_rgba(34,197,94,0.4)] group-hover:shadow-[0_0_40px_rgba(34,197,94,0.6)] transition-all duration-300 group-hover:scale-105">
-                                            <svg className="w-12 h-12 sm:w-16 sm:h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                            </svg>
+                                        <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full flex items-center justify-center overflow-hidden
+                                            shadow-[0_0_30px_rgba(34,197,94,0.4)] group-hover:shadow-[0_0_40px_rgba(34,197,94,0.6)] transition-all duration-300 group-hover:scale-105
+                                            bg-gradient-to-br from-green-400 to-green-600 p-0.5">
+                                            {avatarUrl ? (
+                                                <img src={avatarUrl} alt="Avatar usuario" className="w-full h-full rounded-full object-cover bg-gray-900"
+                                                />
+                                            ) : null}
+                                            <div className={`w-full h-full bg-gray-900 rounded-full flex items-center justify-center ${avatarUrl ? 'hidden' : 'flex'}`}>
+                                                <svg className="w-10 h-10 sm:w-14 sm:h-14 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                </svg>
+                                            </div>
                                         </div>
                                         {/* Boton de edición de AVATAR */}
                                         <button className="absolute -bottom-2 -right-2 bg-gray-800 border-2 border-green-400/50 rounded-full p-2 shadow-[0_0_15px_rgba(34,197,94,0.5)]">

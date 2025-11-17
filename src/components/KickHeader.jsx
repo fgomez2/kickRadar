@@ -14,10 +14,7 @@ const KickHeader = forwardRef((props, parentRef) => {
     const getAvatarUrl = () => {
         if (!perfil?.avatar_key) return null
         
-        const { data } = supabase.storage
-            .from('avatars')
-            .getPublicUrl(perfil.avatar_key)
-        
+        const { data } = supabase.storage.from('avatars').getPublicUrl(perfil.avatar_key)
         return data.publicUrl
     }
 
@@ -82,15 +79,10 @@ const KickHeader = forwardRef((props, parentRef) => {
                                 >
                                     {avatarUrl ? (
                                         <img src={avatarUrl} alt="Avatar" className="w-11 h-11 rounded-full object-cover border-2 border-gray-900"
-                                            onError={(e) => {
-                                                // Si la imagen falla, mostrar icono por defecto
-                                                e.target.style.display = 'none'
-                                                e.target.nextSibling.style.display = 'flex'
-                                            }}
                                         />
                                     ) : null}
                                     <div className={`w-11 h-11 bg-gray-900 rounded-full flex items-center justify-center ${avatarUrl ? 'hidden' : 'flex'}`}>
-                                        <svg className="w-6 h-6 text-green-400 group-hover:text-green-300 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                         </svg>
                                     </div>
@@ -185,15 +177,11 @@ const KickHeader = forwardRef((props, parentRef) => {
                                         {avatarUrl ? (
                                             <Link to="/miPerfil">
                                                 <img src={avatarUrl} alt="avatar" className="w-10 h-10 rounded-full object-cover border-2 border-gray-900"
-                                                    onError={(e) => {
-                                                        e.target.style.display = 'none'
-                                                        e.target.nextSibling.style.display = 'flex'
-                                                    }}
                                                 />
                                             </Link>
                                         ) : null}
                                         <div className={`w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center ${avatarUrl ? 'hidden' : 'flex'}`}>
-                                            <svg className="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                             </svg>
                                         </div>
