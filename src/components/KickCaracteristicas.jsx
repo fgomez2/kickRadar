@@ -108,8 +108,7 @@ export default function KickCaracteristicas({ onComenzarClick }) {
                 <div className="text-center mt-12 sm:mt-16 lg:mt-20">
                     <button onClick={onComenzarClick}
                         className="bg-green-400 hover:bg-green-500 text-white px-8 sm:px-10 py-3 sm:py-4 rounded-full text-base sm:text-lg font-semibold transition-all duration-300 
-                        shadow-[0_0_20px_rgba(34,197,94,0.5)] hover:shadow-[0_0_35px_rgba(34,197,94,0.9)] 
-                        hover:scale-105 active:scale-95 transform hover:-translate-y-1"
+                        shadow-[0_0_20px_rgba(34,197,94,0.5)] hover:shadow-[0_0_35px_rgba(34,197,94,0.9)] hover:scale-105 active:scale-95 transform hover:-translate-y-1"
                     >
                         Comienza a explorar
                     </button>

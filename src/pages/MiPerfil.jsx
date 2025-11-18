@@ -253,8 +253,7 @@ export default function MiPerfil() {
                         </div>
                     ) : (
                         <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl sm:rounded-3xl shadow-[0_0_40px_rgba(34,197,94,0.2)] sm:shadow-[0_0_60px_rgba(34,197,94,0.25)]
-                            border border-green-500/20 p-6 sm:p-8 md:p-10 backdrop-blur-sm 
-                            hover:shadow-[0_0_80px_rgba(34,197,94,0.35)] transition-all duration-300 relative overflow-hidden">
+                            border border-green-500/20 p-6 sm:p-8 md:p-10 backdrop-blur-sm hover:shadow-[0_0_80px_rgba(34,197,94,0.35)] transition-all duration-300 relative overflow-hidden">
                             
                             <div className="absolute top-0 right-0 w-32 h-32 md:w-40 md:h-40 bg-green-400/10 rounded-full blur-3xl"></div>
                             <div className="absolute bottom-0 left-0 w-32 h-32 md:w-40 md:h-40 bg-green-400/10 rounded-full blur-3xl"></div>
@@ -346,8 +345,7 @@ export default function MiPerfil() {
                                                 </label>
                                                 <input id="nombreCompleto" type="text" required minLength={3} value={nombreCompleto}
                                                     onChange={(e) => setNombreCompleto(e.target.value)} placeholder="Tu nombre completo" disabled={guardando}
-                                                    className="w-full px-4 py-3.5 bg-gray-800/50 border-2 border-gray-700 rounded-xl text-white 
-                                                    placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-400/50 
+                                                    className="w-full px-4 py-3.5 bg-gray-800/50 border-2 border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-400/50 
                                                     focus:border-green-400 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:border-gray-600 backdrop-blur-sm"
                                                 />
                                             </div>
@@ -540,8 +538,7 @@ export default function MiPerfil() {
                                 <button onClick={handleCambiarAvatar}
                                     disabled={!avatarSeleccionado || guardandoAvatar}
                                     className="flex-1 px-6 py-3 bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 
-                                    text-white font-bold rounded-xl text-center transition-all duration-300 
-                                    shadow-[0_0_25px_rgba(34,197,94,0.4)] hover:shadow-[0_0_40px_rgba(34,197,94,0.6)] 
+                                    text-white font-bold rounded-xl text-center transition-all duration-300 shadow-[0_0_25px_rgba(34,197,94,0.4)] hover:shadow-[0_0_40px_rgba(34,197,94,0.6)] 
                                     hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                                 >
                                     {guardandoAvatar ? (
@@ -563,7 +560,7 @@ export default function MiPerfil() {
                                         }}
                                     disabled={guardandoAvatar}
                                     className="flex-1 px-6 py-3 bg-gray-800/50 hover:bg-gray-700 text-white font-semibold rounded-xl border-2 border-gray-600
-                                        hover:border-gray-500 transition-all duration-300 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    hover:border-gray-500 transition-all duration-300 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     Cancelar
                                 </button>

@@ -37,10 +37,7 @@ export default function KickMain({ onEmpiezaYaClick }) {
                             
                             <button onClick={onEmpiezaYaClick}
                                 className="bg-green-400 hover:bg-green-500 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 
-                                             shadow-[0_0_20px_rgba(34,197,94,0.5)] 
-                                             hover:shadow-[0_0_35px_rgba(34,197,94,0.9)] 
-                                             hover:scale-105 active:scale-95 
-                                             transform hover:-translate-y-1">
+                                shadow-[0_0_20px_rgba(34,197,94,0.5)] hover:shadow-[0_0_35px_rgba(34,197,94,0.9)] hover:scale-105 active:scale-95 transform hover:-translate-y-1">
                                 Empieza ya
                             </button>
                         </div>
