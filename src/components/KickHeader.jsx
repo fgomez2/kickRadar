@@ -92,8 +92,7 @@ const KickHeader = forwardRef((props, parentRef) => {
                             {/* Botón favoritos */}
                             <Link to="/misFavoritos">
                                 <button className="group relative p-3 bg-gray-900 hover:bg-gray-800 border-2 border-green-400 
-                                    hover:border-red-400 rounded-full transition-all duration-300 
-                                    shadow-[0_0_15px_rgba(34,197,94,0.4)] hover:shadow-[0_0_25px_rgba(239,68,68,0.6)] 
+                                    hover:border-red-400 rounded-full transition-all duration-300 shadow-[0_0_15px_rgba(34,197,94,0.4)] hover:shadow-[0_0_25px_rgba(239,68,68,0.6)] 
                                     hover:scale-110 active:scale-95"
                                     aria-label="Mis favoritos" title="Mis favoritos"
                                 >
@@ -105,8 +104,7 @@ const KickHeader = forwardRef((props, parentRef) => {
 
                             {/* Botón de cerrar sesión */}
                             <button onClick={cerrarSesion}
-                                className="group relative p-3 bg-gray-900 hover:bg-red-900/20 border-2 border-green-400 
-                                hover:border-red-400 rounded-full transition-all duration-300 
+                                className="group relative p-3 bg-gray-900 hover:bg-red-900/20 border-2 border-green-400 hover:border-red-400 rounded-full transition-all duration-300 
                                 shadow-[0_0_15px_rgba(34,197,94,0.4)] hover:shadow-[0_0_25px_rgba(239,68,68,0.6)] hover:scale-110 active:scale-95"
                                 aria-label="Cerrar sesión" title="Cerrar sesión"
                             >
@@ -126,8 +124,7 @@ const KickHeader = forwardRef((props, parentRef) => {
                             </Link>
                             <Link to="/auth">
                                 <button className="bg-green-400 hover:bg-green-500 text-white px-4 py-2 rounded-full text-sm md:text-base font-medium transition-all duration-300 
-                                        shadow-[0_0_10px_rgba(34,197,94,0.4)] hover:shadow-[0_0_25px_rgba(34,197,94,0.8)] 
-                                        hover:scale-105 active:scale-95 transform hover:-translate-y-0.5">
+                                        shadow-[0_0_10px_rgba(34,197,94,0.4)] hover:shadow-[0_0_25px_rgba(34,197,94,0.8)] hover:scale-105 active:scale-95 transform hover:-translate-y-0.5">
                                     Regístrate
                                 </button>
                             </Link>

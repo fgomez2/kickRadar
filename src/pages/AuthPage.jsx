@@ -177,14 +177,10 @@ export default function AuthPage() {
                                     Email
                                 </div>
                             </label>
-                            <input
-                                id="email"type="email" required
-                                value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@email.com"
+                            <input id="email"type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@email.com"
                                 autoComplete="email" disabled={loading}
-                                className="w-full px-4 py-3.5 bg-gray-800/50 border-2 border-gray-700 rounded-xl text-white 
-                                placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-400/50 
-                                focus:border-green-400 transition-all duration-300 disabled:opacity-50 
-                                disabled:cursor-not-allowed hover:border-gray-600 backdrop-blur-sm"
+                                className="w-full px-4 py-3.5 bg-gray-800/50 border-2 border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-400/50 
+                                focus:border-green-400 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:border-gray-600 backdrop-blur-sm"
                             />
                         </div>
 
@@ -202,10 +198,8 @@ export default function AuthPage() {
                                 <input id="nombreCompleto" type="text" required minLength={3} 
                                     value={nombreCompleto} onChange={(e) => setNombreCompleto(e.target.value)}
                                     placeholder="James Harden" autoComplete="name" disabled={loading}
-                                    className="w-full px-4 py-3.5 bg-gray-800/50 border-2 border-gray-700 rounded-xl text-white 
-                                    placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-400/50 
-                                    focus:border-green-400 transition-all duration-300 disabled:opacity-50 
-                                    disabled:cursor-not-allowed hover:border-gray-600 backdrop-blur-sm"
+                                    className="w-full px-4 py-3.5 bg-gray-800/50 border-2 border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-400/50 
+                                    focus:border-green-400 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:border-gray-600 backdrop-blur-sm"
                                 />
                             </div>
                         )}
@@ -225,14 +219,12 @@ export default function AuthPage() {
                                     minLength={6} value={password} onChange={(e) => setPassword(e.target.value)}
                                     placeholder="••••••••" autoComplete={modo === 'login' ? 'current-password' : 'new-password'} disabled={loading}
                                     className="w-full px-4 py-3.5 pr-12 bg-gray-800/50 border-2 border-gray-700 rounded-xl text-white 
-                                    placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-400/50 
-                                    focus:border-green-400 transition-all duration-300 disabled:opacity-50 
+                                    placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-400/50 focus:border-green-400 transition-all duration-300 disabled:opacity-50 
                                     disabled:cursor-not-allowed hover:border-gray-600 backdrop-blur-sm"
                                 />
                                 <button type="button" onClick={() => setMostrarPassword(!mostrarPassword)} aria-label={mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'} disabled={loading}
                                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-green-400 
-                                    transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed
-                                    p-1 rounded-lg hover:bg-gray-700/50"
+                                    transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed p-1 rounded-lg hover:bg-gray-700/50"
                                 >
                                     {mostrarPassword ? (
                                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -254,8 +246,7 @@ export default function AuthPage() {
                         {/* Botón Submit */}
                         <button type="submit" disabled={loading}
                             className="relative w-full bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white font-bold py-4 px-4 rounded-xl overflow-hidden
-                            transition-all duration-300 shadow-[0_0_30px_rgba(34,197,94,0.4)] 
-                            hover:shadow-[0_0_40px_rgba(34,197,94,0.6)] hover:scale-[1.02] active:scale-[0.98]
+                            transition-all duration-300 shadow-[0_0_30px_rgba(34,197,94,0.4)] hover:shadow-[0_0_40px_rgba(34,197,94,0.6)] hover:scale-[1.02] active:scale-[0.98]
                             disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 group"
                         >
                             {/* Efecto de brillo animado */}
