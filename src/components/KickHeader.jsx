@@ -1,5 +1,5 @@
 import { useState, forwardRef, useImperativeHandle, useRef } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import estilosHeader from './KickHeader.module.css'
 import { useAuth } from '../modules/auth/AuthProvider'
 import { supabase } from '../supabase-client'
@@ -9,6 +9,19 @@ const KickHeader = forwardRef((props, parentRef) => {
     const desktopInputRef = useRef(null)
     const movilInputRef = useRef(null)
     const {estaAutenticado, usuario, perfil, cerrarSesion} = useAuth()
+
+    const navigate = useNavigate()
+
+    const handleBusqueda = (e) => {
+        e.preventDefault()
+        const valor = e.target.query.value.trim()
+        if (!estaAutenticado) {
+            navigate(`/auth?redirect=/sneakers/search?q=${encodeURIComponent(valor)}`)
+        } else {
+            // LÓGICA CUANDO SE IMPLEMENTE
+            console.log('Búsqueda:', e.target.querySelector('input').value)
+        }
+    }
 
     // obtener la URL del avatar
     const getAvatarUrl = () => {
@@ -50,20 +63,20 @@ const KickHeader = forwardRef((props, parentRef) => {
 
                 {/* Barra de busqueda - desktop */}
                 <div id='barra_busqueda' className="hidden lg:block">
-                    <div className="relative">
+                    <form onSubmit={handleBusqueda} className="relative">
                         <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-400 pointer-events-none">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
                         </div>
-                        <input ref={desktopInputRef} type="text" placeholder="Buscar sneaker..."
+                        <input ref={desktopInputRef} type="text" name="query" placeholder="Buscar sneaker..."
                             className={`${estilosHeader.barraBusqueda} bg-gray-900 border-2 border-green-400 text-white pl-10 pr-4 py-2 rounded-full 
                             shadow-[0_0_10px_rgba(34,197,94,0.5)] hover:shadow-[0_0_15px_rgba(34,197,94,0.7)] hover:border-green-300
                             focus:shadow-[0_0_20px_rgba(34,197,94,0.8)] focus:border-green-300 focus:outline-none placeholder-white/70 transition-all duration-300 w-80 md:w-96 lg:w-[28rem] xl:w-[32rem]`}
                         />
                         <div className="absolute inset-0 rounded-full border-2 border-green-400 shadow-[inset_0_0_10px_rgba(34,197,94,0.3)] pointer-events-none">
                         </div>
-                    </div>
+                    </form>
                 </div>
                 
                 {/* Botones de autenticación - desktop */}
@@ -145,7 +158,7 @@ const KickHeader = forwardRef((props, parentRef) => {
 
             {/* Barra de busqueda - móvil y tablet */}
             <div className="lg:hidden mt-3 sm:mt-4 flex justify-center px-6">
-                <div className="relative w-full max-w-md">
+                <form onSubmit={handleBusqueda} className="relative w-full max-w-md">
                     <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-400 pointer-events-none">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -158,7 +171,7 @@ const KickHeader = forwardRef((props, parentRef) => {
                     />
                     <div className="absolute inset-0 rounded-full border-2 border-green-400 shadow-[inset_0_0_10px_rgba(34,197,94,0.3)] pointer-events-none">
                     </div>
-                </div>
+                </form>
             </div>
 
             {/* Menú desplegable */}

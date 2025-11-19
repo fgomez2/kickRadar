@@ -26,7 +26,6 @@ export default function Callback() {
                 console.log('📍 Código recibido:', codigo)
                 
                 const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/exchange-stockx-code`,
-                    https://wzpboxncvwarmgnjqyfm.supabase.co/functions/v1/exchange-stockx-code 
                     {
                         method: 'POST',
                         headers: {
