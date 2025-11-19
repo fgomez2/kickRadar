@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { supabase } from "../supabase-client"
 
 export default function Callback() {
     const navigate = useNavigate()
@@ -21,6 +22,9 @@ export default function Callback() {
 
         const codigoIntercambio = async () => {
             try {
+                console.log('🔄 Iniciando intercambio de código...')
+                console.log('📍 Código recibido:', codigo)
+                
                 const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/exchange-stockx-code`,
                     {
                         method: 'POST',
@@ -35,28 +39,91 @@ export default function Callback() {
                     }
                 )
 
+                console.log('📡 Respuesta HTTP status:', response.status)
+
                 if (!response.ok) {
-                    throw new Error(`Error en el intercambio del código: ${response.statusText}`)
+                    const errorData = await response.json().catch(() => ({ error: 'No JSON response' }))
+                    console.error('❌ Error de la Edge Function:', errorData)
+                    throw new Error(`Error ${response.status}: ${JSON.stringify(errorData)}`)
                 }
 
                 const data = await response.json()
-                console.log('Token de acceso recibido:', data)
+                console.log('✅ Token de acceso recibido:', data)
 
-                // Guardar el access_token en localStorage
+                // Guardar tokens en la tabla stockx_credentials (solo una fila)
                 if (data.access_token) {
-                    localStorage.setItem('stockx_access_token', data.access_token)
+                    console.log('💾 Guardando tokens en base de datos...')
                     
-                    // Opcional: guardar también la fecha de expiración si la API la proporciona
-                    if (data.expires_in) {
-                        const expiracion = Date.now() + (data.expires_in * 1000)
-                        localStorage.setItem('stockx_token_expiration', expiracion.toString())
+                    // Calcular fecha de expiración
+                    const expiresAt = data.expires_in 
+                        ? new Date(Date.now() + (data.expires_in * 1000)).toISOString()
+                        : null
+
+                    console.log('⏰ Expiración calculada:', expiresAt)
+
+                    // Intentar actualizar si ya existe, sino insertar
+                    const { data: existing, error: selectError } = await supabase
+                        .from('stockx_credentials')
+                        .select('id')
+                        .limit(1)
+                        .maybeSingle()
+
+                    if (selectError) {
+                        console.error('❌ Error al buscar registro existente:', selectError)
+                        throw selectError
                     }
+
+                    console.log('🔍 Registro existente:', existing ? 'SÍ' : 'NO') // ✅ No lanza error si no hay filas
+
+                    if (existing) {
+                        // Actualizar registro existente
+                        const { error: updateError } = await supabase
+                            .from('stockx_credentials')
+                            .update({
+                                access_token: data.access_token,
+                                refresh_token: data.refresh_token || null,
+                                token_expires_at: expiresAt
+                            })
+                            .eq('id', existing.id)
+
+                        if (updateError) {
+                            console.error('❌ Error actualizando tokens:', updateError)
+                            throw updateError
+                        } else {
+                            console.log('✅ Tokens actualizados en base de datos')
+                        }
+                    } else {
+                        console.log('➕ Insertando nuevo registro...')
+                        // Insertar nuevo registro
+                        const { error: insertError } = await supabase
+                            .from('stockx_credentials')
+                            .insert({
+                                access_token: data.access_token,
+                                refresh_token: data.refresh_token || null,
+                                token_expires_at: expiresAt
+                            })
+
+                        if (insertError) {
+                            console.error('❌ Error guardando tokens:', insertError)
+                            throw insertError
+                        } else {
+                            console.log('✅ Tokens guardados en base de datos')
+                        }
+                    }
+                } else {
+                    console.warn('⚠️ No se recibió access_token en la respuesta')
                 }
 
+                console.log('🎉 Proceso completado exitosamente')
                 setEstado('exito')
                 setTimeout(() => navigate('/'), 1500)
             } catch (error) {
-                console.error('Error durante el intercambio del código:', error)
+                console.error('💥 Error durante el intercambio del código:', error)
+                console.error('📋 Detalles completos:', {
+                    message: error.message,
+                    stack: error.stack,
+                    error: error
+                })
                 setEstado('error')
                 setMensajeError(error.message || 'Error al procesar la autenticación')
                 setTimeout(() => navigate('/'), 3000)
@@ -96,7 +163,7 @@ export default function Callback() {
                         </div>
                     </div>
                 )}
-
+m
                 {estado === 'error' && (
                     <div className="flex flex-col items-center gap-6">
                         <div className="w-20 h-20 bg-red-500/20 rounded-full flex items-center justify-center">
