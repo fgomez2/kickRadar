@@ -26,7 +26,7 @@ const KickHeader = forwardRef((props, parentRef) => {
         } else {
             // LÓGICA CUANDO SE IMPLEMENTE
             console.log('Búsqueda:', valor)
-            navigate(`/sneakers/search?q=${encodeURIComponent(valor)}`)
+            // navigate(`/sneakers/search?q=${encodeURIComponent(valor)}`)
         }
     }
 
