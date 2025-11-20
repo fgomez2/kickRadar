@@ -6,6 +6,7 @@ import MiPerfil from '../pages/MiPerfil'
 import MisFavoritos from '../pages/MisFavoritos'
 import Callback from '../pages/Callback'
 
+
 export default function AppRoutes() {
     return (
         <Routes>
@@ -20,6 +21,9 @@ export default function AppRoutes() {
             <Route path="/miPerfil" element={<MiPerfil />} />
             {/* Ruta de favoritos */}
             <Route path="/misFavoritos" element={<MisFavoritos />} />
+
+            {/* Ruta cuando se busca una sneaker */}
+            {/* <Route path="/sneakers/search" element={<Busqueda />} /> */}
 
             {/* Rutas públicas */}
             {/* Ruta callback OAuth */}

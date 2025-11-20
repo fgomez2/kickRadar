@@ -164,7 +164,7 @@ const KickHeader = forwardRef((props, parentRef) => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                     </div>
-                    <input ref={movilInputRef} type="text" placeholder="Buscar sneaker..."
+                    <input ref={movilInputRef} type="text" name="query" placeholder="Buscar sneaker..."
                         className={`${estilosHeader.barraBusqueda} bg-gray-900 border-2 border-green-400 text-white pl-10 pr-4 py-2 rounded-full 
                         shadow-[0_0_10px_rgba(34,197,94,0.5)] hover:shadow-[0_0_15px_rgba(34,197,94,0.7)] hover:border-green-300
                         focus:shadow-[0_0_20px_rgba(34,197,94,0.8)] focus:border-green-300 focus:outline-none placeholder-white/70 transition-all duration-300 w-full`}
