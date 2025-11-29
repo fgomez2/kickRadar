@@ -14,19 +14,19 @@ const KickHeader = forwardRef((props, parentRef) => {
 
     const handleBusqueda = (e) => {
         e.preventDefault()
-        const valor = e.target.query.value.trim()
+        const sneakerBuscada = e.target.query.value.trim()
         
-        if (!valor) return // No buscar si está vacío
+        if (!sneakerBuscada) return // No buscar si está vacío
 
         if (!estaAutenticado) {
             // Se dispara el evento de no logueado para mostrar modal (NO SE PUEDE HACER BÚSQUEDA SI NO ESTÁ LOGUEADO)
             window.dispatchEvent(new CustomEvent('mostrarModalLogin', { 
-                detail: { busqueda: valor } 
+                detail: { busqueda: sneakerBuscada } 
             }))
         } else {
             // LÓGICA CUANDO SE IMPLEMENTE
-            console.log('Búsqueda:', valor)
-            // navigate(`/sneakers/search?q=${encodeURIComponent(valor)}`)
+            console.log('Búsqueda:', sneakerBuscada)
+            navigate(`/sneakers/search/${encodeURIComponent(sneakerBuscada)}`)
         }
     }
 
