@@ -7,7 +7,12 @@ export default function useStockxSearch(busqueda) {
     const [error, setError] = useState(null)
 
     useEffect(() => {
-        if (!busqueda) return
+        if (!busqueda) {
+            setSneakers([])
+            return
+        }
+
+        const controller = new AbortController()
 
         const fetchData = async () => {
             setCargando(true)
@@ -18,40 +23,26 @@ export default function useStockxSearch(busqueda) {
                 // 1. Obtener el access token y x-api-key de Supabase
                 // 2. llamar a la api de stockx con la búsqueda
                 // 3. guardar los resultados en el estado sneakers
-                const { data: credenciales, error: errorCreds } = await supabase
-                    .from('stockx_credentials')
-                    .select('access_token')
-                    .limit(1)
-                    .maybeSingle()
+                const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+                const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
-                if (errorCreds || !credenciales?.access_token) {
-                    throw new Error('No se pudo obtener el token de acceso de las credenciales de StockX')
+                if (!supabaseUrl || !supabaseAnonKey) {
+                    throw new Error('No se pudo obtener la URL de Supabase de las variables de entorno')
                 }
 
-                const apiKey = import.meta.env.VITE_STOCKX_API_KEY
-
-                if (!apiKey) {
-                    throw new Error('No se pudo obtener la x-api-key de las variables de entorno')
-                }
-
-                // Filtrar solo por sneakers en la URL
-                const url = `https://api.stockx.com/v2/catalog/search?query=${encodeURIComponent(busqueda)}&productCategory=sneakers&pageNumber=1&pageSize=15`
+                const url = `${supabaseUrl}/functions/v1/stockx-search?query=${encodeURIComponent(busqueda)}`
 
                 const response = await fetch(url, {
                     method: 'GET',
+                    signal: controller.signal,
                     headers: {
-                        Accept: 'application/json',
-                        'x-api-key': apiKey,
-                        Authorization: `Bearer ${credenciales.access_token}`
-                    }
+                        apiKey: supabaseAnonKey,
+                        Authorization: `Bearer ${supabaseAnonKey}`,
+                    },
                 })
 
                 if (!response.ok) {
-                    // Si el token expiró (401), intentar renovarlo
-                    if (response.status === 401) {
-                        throw new Error('Token de acceso expirado. Por favor, contacta al administrador.')
-                    }
-                    const mensajeError = `Error en la solicitud a StockX: ${response.status} ${response.statusText}`
+                    const mensajeError = `Error en la búsqueda: ${response.status} ${response.statusText}`
                     throw new Error(mensajeError)
                 }
 
@@ -62,16 +53,32 @@ export default function useStockxSearch(busqueda) {
                 
                 if (!Array.isArray(productos) || productos.length === 0) {
                     setSneakers([])
+                    return
                 } else {
                     // Filtro adicional por si la API no respeta el parámetro productCategory
-                    const sneakersFiltered = productos.filter(producto => 
-                        !producto.productCategory || 
-                        producto.productCategory.toLowerCase() === 'sneakers'
+                    const soloSneakers = productos.filter((p) =>
+                        (p.productType && p.productType.toLowerCase() === 'sneakers') ||
+                        (p.category && p.category.toLowerCase() === 'sneakers')
                     )
-                    setSneakers(sneakersFiltered)
-                }
 
+                    // Normalizar datos
+                    const normalizados = soloSneakers.map((p) => ({
+                        id: p.productId,
+                        titulo: p.title,
+                        marca: p.brand,
+                        tipo: p.productType,
+                        styleId: p.styleId,
+                        urlKey: p.urlKey,
+                        precioRetail: p.productAttributes?.retailPrice ?? null,
+                        colores: p.productAttributes?.colorway ?? null,
+                        genero: p.productAttributes?.gender ?? null,
+                        fechaDeSalida: p.productAttributes?.releaseDate ?? null,
+                    }))
+
+                    setSneakers(normalizados)
+                }
             } catch (err) {
+                if (err.name === 'AbortError') return // La solicitud fue abortada
                 console.error('Error al buscar sneakers en StockX:', err)
                 setError('Error al buscar sneakers. Por favor, inténtalo de nuevo más tarde.')
             } finally {
@@ -80,6 +87,10 @@ export default function useStockxSearch(busqueda) {
         }
 
         fetchData()
+
+        return () => {
+            controller.abort()
+        }
     }, [busqueda])
 
     return { sneakers, cargando, error }
