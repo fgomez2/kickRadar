@@ -76,7 +76,7 @@ export default function BusquedaSneakers() {
                             Se encontraron <span className="text-green-400 font-semibold">{sneakers.length}</span> resultados
                         </p>
                         
-                        <section className="grid gap-4 sm:gap-5 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+                        <section className="grid gap-4 sm:gap-5 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
                             {sneakers.map((sneaker) => (
                                 <article 
                                     key={sneaker.id} 
