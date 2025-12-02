@@ -61,19 +61,65 @@ export default function useStockxSearch(busqueda) {
                         (p.category && p.category.toLowerCase() === 'sneakers')
                     )
 
+                    const formatearUrlKey = (urlKey) => {
+                        if (!urlKey) return null
+                        
+                        // Division por guiones
+                        const palabras = urlKey.split('-')
+                        
+                        // Lista de siglas comunes mayus
+                        const siglas = ['og', 'ps', 'gs', 'td', 'bp', 'se', 'lx', 'sp', 'af', 'qs', 'pe', 'rnr', 'mx']
+                        
+                        // Poner primera letra de cada palabra en mayus
+                        const palabrasMayus = palabras.map((palabra, index) => {
+                            if (!palabra) return ''
+                            
+                            const palabraLower = palabra.toLowerCase()
+                            
+                            // Si es 'adidas' en la primera posición, mantenerla en minúsculas
+                            if (index === 0 && palabraLower === 'adidas') {
+                                return 'adidas'
+                            }
+                            
+                            // Si la palabra está en la lista de siglas, ponerla en mayúsculas
+                            if (siglas.includes(palabraLower)) {
+                                return palabraLower.toUpperCase()
+                            }
+                            
+                            if (/^\d+$/.test(palabra)) {
+                                return palabra
+                            }
+                            
+                            // Casos especiales de mezcla (ej V2)
+                            if (/^v\d+$/i.test(palabra)) {
+                                return palabra.toUpperCase()
+                            }
+                            
+                            // Mayus primera letra y el resto minusculas
+                            return palabra.charAt(0).toUpperCase() + palabra.slice(1).toLowerCase()
+                        })
+                        
+                        return palabrasMayus.join('-')
+                    }
+
                     // Normalizar datos
-                    const normalizados = soloSneakers.map((p) => ({
-                        id: p.productId,
-                        titulo: p.title,
-                        marca: p.brand,
-                        tipo: p.productType,
-                        styleId: p.styleId,
-                        urlKey: p.urlKey,
-                        precioRetail: p.productAttributes?.retailPrice ?? null,
-                        colores: p.productAttributes?.colorway ?? null,
-                        genero: p.productAttributes?.gender ?? null,
-                        fechaDeSalida: p.productAttributes?.releaseDate ?? null,
-                    }))
+                    const normalizados = soloSneakers.map((p) => {
+                        const urlKeyFormateado = formatearUrlKey(p.urlKey)
+                        
+                        return {
+                            id: p.productId,
+                            titulo: p.title,
+                            marca: p.brand,
+                            tipo: p.productType,
+                            styleId: p.styleId,
+                            urlKey: p.urlKey,
+                            imagenUrl: urlKeyFormateado ? `https://images.stockx.com/images/${urlKeyFormateado}-Product.jpg` : null,
+                            precioRetail: p.productAttributes?.retailPrice ?? null,
+                            colores: p.productAttributes?.colorway ?? null,
+                            genero: p.productAttributes?.gender ?? null,
+                            fechaDeSalida: p.productAttributes?.releaseDate ?? null,
+                        }
+                    })
 
                     setSneakers(normalizados)
                 }
