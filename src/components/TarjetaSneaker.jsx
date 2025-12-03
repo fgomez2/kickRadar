@@ -1,12 +1,17 @@
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 export default function TarjetaSneaker({ sneaker }) {
     const [imagenCargada, setImagenCargada] = useState(false)
     const [errorImagen, setErrorImagen] = useState(false)
+    const navigate = useNavigate()
+
+    const handleClick = () => {
+        navigate(`/sneakers/${sneaker.id}`)
+    }
 
     return (
-        <article 
-            className="group bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-xl sm:rounded-2xl border border-gray-700/50 
+        <article onClick={handleClick} className="group bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-xl sm:rounded-2xl border border-gray-700/50 
             hover:border-green-400/70 hover:shadow-[0_0_30px_rgba(34,197,94,0.4)] transition-all duration-300 overflow-hidden 
             hover:scale-[1.02] active:scale-[0.98] cursor-pointer backdrop-blur-sm"
         >
@@ -24,9 +29,7 @@ export default function TarjetaSneaker({ sneaker }) {
                         )}
 
                         <img src={sneaker.imagenUrl} alt={sneaker.titulo}
-                            className={`w-full h-full object-contain block transition-all duration-500 group-hover:scale-105 ${
-                                imagenCargada ? "opacity-100" : "opacity-0"
-                            }`}
+                            className={`w-full h-full object-contain block transition-all duration-500 group-hover:scale-105 ${imagenCargada ? "opacity-100" : "opacity-0"}`}
                             onLoad={() => setImagenCargada(true)} onError={() => setErrorImagen(true)} loading="lazy"
                         />
                     </>
