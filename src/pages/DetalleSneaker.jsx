@@ -1,52 +1,15 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import KickHeader from "../components/KickHeader"
 import KickFooter from "../components/KickFooter"
+import useStockxProduct from "../hooks/useStockxProduct"
 
 export default function DetalleSneaker() {
     const { id } = useParams() // obtenemos el id de la sneaker por la URL
     const navigate = useNavigate()
-    const [sneaker, setSneaker] = useState(null)
-    const [cargando, setCargando] = useState(true)
+    const { sneaker, cargando, error } = useStockxProduct(id)
     const [imagenCargada, setImagenCargada] = useState(false)
     const [errorImagen, setErrorImagen] = useState(false)
-
-    useEffect(() => {
-        // AQUÍ IRA LA LÓGICA PARA OBTENER LOS DETALLES DE LA SNEAKER SEGÚN SU ID
-        // POR AHORA SIMULAMOS UNA CARGA
-        const fetchSneakerDetalles = async () => {
-            try {
-                // TO DO: Implementar la llamada a la API para obtener los detalles de la sneaker
-                // Por ahora ejemplo simulado
-
-                // Simulación de carga
-                await new Promise((resolve) => setTimeout(resolve, 1000))
-
-                // Aquí debería ir la llamada real
-                // const response = await fetch(supabase...)
-                // const data = await response.json()
-
-                // Datos de ejemplo
-                setSneaker({
-                    id: id,
-                    titulo: 'Air Jordan 1 Retro High OG Chicago 2025',
-                    marca: 'Jordan',
-                    urlKey: 'Air-Jordan-1-Retro-High-OG-Chicago-2025',
-                    imagenUrl: 'https://images.stockx.com/images/Air-Jordan-1-Retro-Low-OG-Chicago-2025-Product.jpg',
-                    precioRetail: 180,
-                    colores: 'Chicago/White/Black/Red',
-                    genero: 'Men',
-                    fechaDeSalida: '2025-03-15',
-                    descripcion: 'La icónica Air Jordan 1 regresa en su colorway original de Chicago.'
-                })
-            } catch (error) {
-                console.error('Error al cargar los detalles de la sneaker:', error)
-            } finally {
-                setCargando(false)
-            }
-        }
-        fetchSneakerDetalles()
-    }, [id])
 
     if (cargando) {
         return (
@@ -68,7 +31,7 @@ export default function DetalleSneaker() {
         )
     }
 
-    if (!sneaker) {
+    if (!sneaker && !cargando) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black flex flex-col">
                 <KickHeader />
