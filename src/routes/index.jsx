@@ -6,6 +6,7 @@ import MiPerfil from '../pages/MiPerfil'
 import MisFavoritos from '../pages/MisFavoritos'
 import Callback from '../pages/Callback'
 import BusquedaSneakers from '../pages/BusquedaSneakers'
+import DetalleSneaker from '../pages/DetalleSneaker'
 
 
 export default function AppRoutes() {
@@ -25,6 +26,8 @@ export default function AppRoutes() {
 
             {/* Ruta cuando se busca una sneaker */}
             <Route path="/sneakers/search/:busqueda" element={<BusquedaSneakers />} />
+            {/* Ruta de una sneaker en concreto */}
+            <Route path="/sneakers/:id" element={<DetalleSneaker />} />
 
             {/* Rutas públicas */}
             {/* Ruta callback OAuth */}
