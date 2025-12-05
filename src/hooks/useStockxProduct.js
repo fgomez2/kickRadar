@@ -2,12 +2,17 @@ import { useState, useEffect } from 'react'
 
 export default function useStockxProduct(productId) {
     const [sneaker, setSneaker] = useState(null)
-    const [cargando, setCargando] = useState(false)
+    // forzar que productId sea booleano
+    const [cargando, setCargando] = useState(!!productId) // si hay un productId el loader es activo, si no hay productId no mostraremos ningún loader
     const [error, setError] = useState(null)
+    const [cargaCompleta, setCargaCompleta] = useState(false) // para forzar ver la carga
 
     useEffect(() => {
         if (!productId) {
             setSneaker(null)
+            setCargando(false)
+            setError(null)
+            setCargaCompleta(false)
             return
         }
 
@@ -16,6 +21,10 @@ export default function useStockxProduct(productId) {
         const fetchData = async () => {
             setCargando(true)
             setError(null)
+            setCargaCompleta(false)
+
+            // para forzar que salga "cargando detalles..." de la sneaker
+            const inicio = Date.now()
 
             try {
                 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
@@ -117,7 +126,15 @@ export default function useStockxProduct(productId) {
                 console.error('Error al obtener detalles del producto:', err)
                 setError('Error al cargar los detalles del producto. Por favor, inténtalo de nuevo más tarde.')
             } finally {
+                const tiempoTranscurrido = Date.now() - inicio
+                const tiempoMinimo = 600
+
+                if (tiempoTranscurrido < tiempoMinimo) {
+                    await new Promise(res => setTimeout(res, tiempoMinimo - tiempoTranscurrido))
+                }
+
                 setCargando(false)
+                setCargaCompleta(true)
             }
         }
 
@@ -128,5 +145,5 @@ export default function useStockxProduct(productId) {
         }
     }, [productId])
 
-    return { sneaker, cargando, error }
+    return { sneaker, cargando, error, cargaCompleta }
 }

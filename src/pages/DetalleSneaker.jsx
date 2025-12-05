@@ -7,11 +7,11 @@ import useStockxProduct from "../hooks/useStockxProduct"
 export default function DetalleSneaker() {
     const { id } = useParams() // obtenemos el id de la sneaker por la URL
     const navigate = useNavigate()
-    const { sneaker, cargando, error } = useStockxProduct(id)
+    const { sneaker, cargando, error, cargaCompleta } = useStockxProduct(id)
     const [imagenCargada, setImagenCargada] = useState(false)
     const [errorImagen, setErrorImagen] = useState(false)
 
-    if (cargando && !imagenCargada) {
+    if (cargando || !cargaCompleta) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black flex flex-col">
                 <KickHeader />
@@ -31,7 +31,7 @@ export default function DetalleSneaker() {
         )
     }
 
-    if (!sneaker && !cargando) {
+    if (!sneaker && !cargando && cargaCompleta) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black flex flex-col">
                 <KickHeader />
