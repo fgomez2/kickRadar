@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '../supabase-client'
 
 export default function useStockxSearch(busqueda) {
     const [sneakers, setSneakers] = useState([])
-    const [cargando, setCargando] = useState(false)
+    const [cargando, setCargando] = useState(!!busqueda)
     const [error, setError] = useState(null)
 
     useEffect(() => {
         if (!busqueda) {
             setSneakers([])
+            setCargando(false)
+            setError(null)
             return
         }
 

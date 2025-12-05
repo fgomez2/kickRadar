@@ -11,7 +11,7 @@ export default function DetalleSneaker() {
     const [imagenCargada, setImagenCargada] = useState(false)
     const [errorImagen, setErrorImagen] = useState(false)
 
-    if (cargando) {
+    if (cargando && !imagenCargada) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black flex flex-col">
                 <KickHeader />
@@ -143,9 +143,9 @@ export default function DetalleSneaker() {
                             </div>
                         </div>
 
-                        {/* Botones de acción --> FAV y ALERTA (TODO) */}
+                        {/* Botones de acción --> FAV y ALERTA (TODO FUNCIONALIDAD) */}
                         <div className="flex gap-4">
-                            {/* Botón Favoritos */}
+                            {/* favorito --> tabla favorites en supabase */}
                             <button className="group relative flex items-center justify-center w-14 h-14 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 hover:from-red-500/20 hover:via-red-500/10 hover:to-red-500/20 rounded-full border border-gray-700 hover:border-red-400 transition-all duration-300 hover:scale-110 active:scale-95"
                                 title="Añadir a favoritos"
                             >
@@ -158,7 +158,7 @@ export default function DetalleSneaker() {
                                 </span>
                             </button>
 
-                            {/* Botón Alerta */}
+                            {/* alerta */}
                             <button className="group relative flex items-center justify-center w-14 h-14 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 hover:from-green-500/20 hover:via-green-500/10 hover:to-green-500/20 rounded-full border border-gray-700 hover:border-green-400 transition-all duration-300 hover:scale-110 active:scale-95"
                                 title="Crear alerta de precio"
                             >

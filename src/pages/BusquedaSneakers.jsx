@@ -26,7 +26,7 @@ export default function BusquedaSneakers() {
                     <div className="h-1 w-20 bg-gradient-to-r from-green-400 to-green-600 rounded-full shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div>
                 </div>
 
-                {/* Loading state */}
+                {/* cuando carga... */}
                 {cargando && (
                     <div className="flex flex-col items-center justify-center py-20">
                         <div className="relative">
@@ -39,7 +39,7 @@ export default function BusquedaSneakers() {
                     </div>
                 )}
 
-                {/* Error state */}
+                {/* si hay error... */}
                 {error && (
                     <div className="bg-gradient-to-br from-red-900/30 via-red-800/20 to-red-900/30 border-2 border-red-500/50 rounded-2xl p-6 shadow-[0_0_30px_rgba(239,68,68,0.3)] backdrop-blur-sm">
                         <div className="flex items-start gap-4">
@@ -57,7 +57,7 @@ export default function BusquedaSneakers() {
                 )}
 
                 {/* Sin resultados */}
-                {!cargando && !error && sneakers.length === 0 && (
+                {termino && !cargando && !error && sneakers.length === 0 && (
                     <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl sm:rounded-3xl border border-gray-700/50 p-8 sm:p-12 text-center shadow-[0_0_40px_rgba(75,85,99,0.2)]">
                         <div className="inline-block p-4 bg-gray-800/50 rounded-full mb-6 shadow-[0_0_20px_rgba(75,85,99,0.3)]">
                             <svg className="w-16 h-16 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
