@@ -1,15 +1,38 @@
 import { useEffect, useRef, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import KickHeader from "../components/KickHeader"
 import KickFooter from "../components/KickFooter"
+import { supabase } from "../supabase-client"
 
 export default function MisFavoritos() {
     const headRef = useRef(null)
+
     const [favoritos, setFavoritos] = useState([])
+    const [cargando, setCargando] = useState(true)
+    const [error, setError] = useState(null)
 
     useEffect(() => {
         document.title = 'Mis Sneakers Favoritas - KickRadar'
         headRef.current?.focus()
-        // IMPORTANTEEEE (POR HACER): CARGAR FAVORITOS DEL USUARIO DESDE SUPABASE (TABLA FAVORITES)
+
+        const cargarFavoritos = async () => {
+            setCargando(true)
+            setError(null)
+
+            // Obtener el usuario autenticado
+            const { data: { user }, error: userError } = await supabase.auth.getUser()
+
+            if (userError || !user) {
+                setFavoritos([])
+                setCargando(false)
+                return
+            }
+
+            // Traer favoritos desde la tabla favorites
+            const { data, error }
+        }
+
+
     }, [])
 
     return (

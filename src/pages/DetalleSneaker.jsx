@@ -1,8 +1,9 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import KickHeader from "../components/KickHeader"
 import KickFooter from "../components/KickFooter"
 import useStockxProduct from "../hooks/useStockxProduct"
+import { supabase } from "../supabase-client"
 
 export default function DetalleSneaker() {
     const { id } = useParams() // obtenemos el id de la sneaker por la URL
@@ -10,6 +11,86 @@ export default function DetalleSneaker() {
     const { sneaker, cargando, error, cargaCompleta } = useStockxProduct(id)
     const [imagenCargada, setImagenCargada] = useState(false)
     const [errorImagen, setErrorImagen] = useState(false)
+
+    // Estados para favoritos
+    const [esFavorito, setEsFavorito] = useState(false)
+    const [cargandoFavorito, setCargandoFavorito] = useState(false)
+
+    useEffect(() => {
+        const comprobarFavorito = async () => {
+            if (!id) return
+
+            const { data: { user }, error: userError } = await supabase.auth.getUser()
+            if (userError || !user) {
+                setEsFavorito(false)
+                return
+            }
+
+            const { data, error } = await supabase
+                .from('favorites')
+                .select('product_id')
+                .eq('user_id', user.id)
+                .eq('product_id', id)
+                .maybeSingle()
+            
+            if (!error && data) {
+                setEsFavorito(true)
+            } else {
+                setEsFavorito(false)
+            }
+        }
+
+        comprobarFavorito()
+    }, [id])  // se ejecuta al cargar la página o cambiar de sneakerr
+
+    // Manejar añadir o quitar de favoritos
+    const handleToggleFavorito = async () => {
+        if (cargandoFavorito || !sneaker) return // prevenir múltiples clics
+        setCargandoFavorito(true)
+
+        try {
+            const { data: { user }, error: userError } = await supabase.auth.getUser()
+
+            if (userError || !user) {
+                console.warn("Usuario no autenticado")
+                setCargandoFavorito(false)
+                return
+            }
+
+            if (!esFavorito) {
+                const { error } = await supabase
+                    .from('favorites')
+                    .insert({
+                        user_id: user.id,
+                        product_id: sneaker.id ?? id,
+                        title: sneaker.titulo,
+                        brand: sneaker.marca,
+                        price_text: sneaker.precioRetail != null ? `${sneaker.precioRetail} €` : null,
+                        image_url: sneaker.imagenUrl,
+                    })
+
+                if (error) {
+                    console.error("Error al añadir a favoritos:", error)
+                } else {
+                    setEsFavorito(true)
+                }
+            } else {
+                const { error } = await supabase
+                    .from('favorites')
+                    .delete()
+                    .eq('user_id', user.id)
+                    .eq('product_id', id)
+
+                if (error) {
+                    console.error("Error al eliminar de favoritos:", error)
+                } else {
+                    setEsFavorito(false)
+                }
+            }
+        } finally {
+            setCargandoFavorito(false)
+        }
+    }
 
     if (cargando || !cargaCompleta) {
         return (
@@ -67,14 +148,14 @@ export default function DetalleSneaker() {
 
                 <div className="grid md:grid-cols-2 gap-8 lg:gap-12 max-w-6xl mx-auto">
                     {/* Imagen */}
-                    <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl border border-gray-700/50 p-8 flex items-center justify-center">
+                    <div className="self-start bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl border border-gray-700/50 p-2 flex items-center justify-center">
                         {sneaker.imagenUrl && !errorImagen ? (
                             <>
                                 {!imagenCargada && (
                                     <div className="w-16 h-16 border-4 border-gray-700 border-t-green-400 rounded-full animate-spin"></div>
                                 )}
                                 <img src={sneaker.imagenUrl} alt={sneaker.titulo}
-                                    className={`max-w-full h-auto transition-opacity duration-500 ${imagenCargada ? 'opacity-100' : 'opacity-0'}`}
+                                    className={`max-h-[380px] w-auto object-contain transition-opacity duration-500 ${imagenCargada ? 'opacity-100' : 'opacity-0'}`}
                                     onLoad={() => setImagenCargada(true)} onError={() => setErrorImagen(true)}
                                 />
                             </>
@@ -146,15 +227,18 @@ export default function DetalleSneaker() {
                         {/* Botones de acción --> FAV y ALERTA (TODO FUNCIONALIDAD) */}
                         <div className="flex gap-4">
                             {/* favorito --> tabla favorites en supabase */}
-                            <button className="group relative flex items-center justify-center w-14 h-14 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 hover:from-red-500/20 hover:via-red-500/10 hover:to-red-500/20 rounded-full border border-gray-700 hover:border-red-400 transition-all duration-300 hover:scale-110 active:scale-95"
-                                title="Añadir a favoritos"
+                            <button onClick={handleToggleFavorito} disabled={cargandoFavorito}
+                                className="group relative flex items-center justify-center w-14 h-14 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 hover:from-red-500/20 hover:via-red-500/10 hover:to-red-500/20 rounded-full border border-gray-700 hover:border-red-400 transition-all duration-300 hover:scale-110 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
+                                title={esFavorito ? "Quitar de favoritos" : "Añadir a favoritos"}
                             >
-                                <svg className="w-6 h-6 text-gray-400 group-hover:text-red-400 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className={`w-6 h-6 transition-colors duration-300 ${esFavorito ? "text-red-400 fill-red-500" : "text-gray-400 group-hover:text-red-400"}`} 
+                                    fill={esFavorito ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24"
+                                >
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                                 </svg>
                                 
                                 <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none">
-                                    Añadir a favoritos
+                                    {esFavorito ? "Quitar de favoritos" : "Añadir a favoritos"}
                                 </span>
                             </button>
 
