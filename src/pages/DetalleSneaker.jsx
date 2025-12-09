@@ -261,7 +261,7 @@ export default function DetalleSneaker() {
                 </div>
                 
                 <div className="max-w-6xl mx-auto">
-                    <TablaPrecios precios={datosPrecios} cargando={tablaCargando} />
+                    <TablaPrecios precios={datosPrecios} cargando={tablaCargando} marca={sneaker?.marca} />
                 </div>
 
             </main>
