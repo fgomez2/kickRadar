@@ -6,6 +6,7 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS", // <--- CAMBIO IMPORTANTE: Aceptamos POST
 }
 
+// Comentario ARREGLAR GITHUB
 serve(async (req: Request): Promise<Response> => {
   // 1. Manejo de CORS
   if (req.method === "OPTIONS") {
