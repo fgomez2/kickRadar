@@ -3,12 +3,20 @@ import { useParams, useNavigate } from "react-router-dom"
 import KickHeader from "../components/KickHeader"
 import KickFooter from "../components/KickFooter"
 import useStockxProduct from "../hooks/useStockxProduct"
+// 1. IMPORTAMOS EL HOOK Y EL COMPONENTE NUEVO
+import useStockxPrices from "../hooks/useStockxPrices"
+import TablaPrecios from "../components/TablaPrecios"
 import { supabase } from "../supabase-client"
 
 export default function DetalleSneaker() {
-    const { id } = useParams() // obtenemos el id de la sneaker por la URL
+    const { id } = useParams()
     const navigate = useNavigate()
     const { sneaker, cargando, error, cargaCompleta } = useStockxProduct(id)
+    
+    // 2. USAMOS EL HOOK DE PRECIOS
+    // Le pasamos sneaker?.urlKey. Si sneaker es null, no pasa nada, el hook lo controla.
+    const { precios, loading: cargandoPrecios } = useStockxPrices(sneaker?.urlKey)
+
     const [imagenCargada, setImagenCargada] = useState(false)
     const [errorImagen, setErrorImagen] = useState(false)
 
@@ -41,11 +49,11 @@ export default function DetalleSneaker() {
         }
 
         comprobarFavorito()
-    }, [id])  // se ejecuta al cargar la página o cambiar de sneakerr
+    }, [id])
 
     // Manejar añadir o quitar de favoritos
     const handleToggleFavorito = async () => {
-        if (cargandoFavorito || !sneaker) return // prevenir múltiples clics
+        if (cargandoFavorito || !sneaker) return 
         setCargandoFavorito(true)
 
         try {
@@ -136,7 +144,6 @@ export default function DetalleSneaker() {
             <KickHeader />
             
             <main className="flex-grow container mx-auto px-4 py-8 md:py-12">
-                {/* Boton volver */}
                 <button onClick={() => navigate(-1)}
                     className="flex items-center gap-2 text-gray-400 hover:text-green-400 transition-colors mb-6"
                 >
@@ -189,30 +196,19 @@ export default function DetalleSneaker() {
                         {/* Detalles */}
                         <div className="space-y-4">
                             <h2 className="text-xl font-bold text-white">Detalles</h2>
-                            
                             <div className="space-y-3">
-                                {/* PENSAR SI INCLUIR ESTO */}
-                                {/* {sneaker.styleId && (
-                                    <div className="flex justify-between items-center py-2 border-b border-gray-800">
-                                        <span className="text-gray-400">SKU</span>
-                                        <span className="text-white font-medium">{sneaker.styleId}</span>
-                                    </div>
-                                )} */}
-                                
                                 {sneaker.colores && (
                                     <div className="flex justify-between items-center py-2 border-b border-gray-800">
                                         <span className="text-gray-400">Combinación de colores</span>
                                         <span className="text-white font-medium">{sneaker.colores}</span>
                                     </div>
                                 )}
-                                
                                 {sneaker.genero && (
                                     <div className="flex justify-between items-center py-2 border-b border-gray-800">
                                         <span className="text-gray-400">Género</span>
                                         <span className="text-white font-medium">{sneaker.genero}</span>
                                     </div>
                                 )}
-                                
                                 {sneaker.fechaDeSalida && (
                                     <div className="flex justify-between items-center py-2 border-b border-gray-800">
                                         <span className="text-gray-400">Fecha de salida</span>
@@ -224,9 +220,8 @@ export default function DetalleSneaker() {
                             </div>
                         </div>
 
-                        {/* Botones de acción --> FAV y ALERTA (TODO FUNCIONALIDAD) */}
+                        {/* Botones de acción */}
                         <div className="flex gap-4">
-                            {/* favorito --> tabla favorites en supabase */}
                             <button onClick={handleToggleFavorito} disabled={cargandoFavorito}
                                 className="group relative flex items-center justify-center w-14 h-14 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 hover:from-red-500/20 hover:via-red-500/10 hover:to-red-500/20 rounded-full border border-gray-700 hover:border-red-400 transition-all duration-300 hover:scale-110 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
                                 title={esFavorito ? "Quitar de favoritos" : "Añadir a favoritos"}
@@ -236,27 +231,24 @@ export default function DetalleSneaker() {
                                 >
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                                 </svg>
-                                
-                                <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none">
-                                    {esFavorito ? "Quitar de favoritos" : "Añadir a favoritos"}
-                                </span>
                             </button>
 
-                            {/* alerta */}
                             <button className="group relative flex items-center justify-center w-14 h-14 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 hover:from-green-500/20 hover:via-green-500/10 hover:to-green-500/20 rounded-full border border-gray-700 hover:border-green-400 transition-all duration-300 hover:scale-110 active:scale-95"
                                 title="Crear alerta de precio"
                             >
                                 <svg className="w-6 h-6 text-gray-400 group-hover:text-green-400 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                                 </svg>
-                                
-                                <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none">
-                                    Crear alerta
-                                </span>
                             </button>
                         </div>
                     </div>
                 </div>
+                
+                {/* 3. AÑADIMOS LA TABLA DE PRECIOS AQUÍ, FUERA DEL GRID DE ARRIBA */}
+                <div className="max-w-6xl mx-auto">
+                    <TablaPrecios precios={precios} cargando={cargandoPrecios} />
+                </div>
+
             </main>
 
             <KickFooter />
