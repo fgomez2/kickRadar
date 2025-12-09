@@ -55,7 +55,7 @@ serve(async (req: Request): Promise<Response> => {
     const stockxSku = jsonResponse.data?.sku || null
 
     const cleanPrices = variants.map((variant: any) => {
-        const askPrice = variant.lowest_ask; 
+        const askPrice = variant.lowest_ask
         const euVariant = variant.sizes?.find((s: any) => s.type === 'eu')
 
         const displaySize = euVariant ? euVariant.size.replace('EU ', '') : variant.size
@@ -71,10 +71,10 @@ serve(async (req: Request): Promise<Response> => {
         }
     })
     // filtramos los que no tienen precio (lowest_ask puede ser null o 0)
-    .filter((i: any) => i.price !== null && i.price > 0);
+    .filter((i: any) => i.price !== null && i.price > 0)
 
     // ORDENAR TALLAS: 38, 39, ...
-    cleanPrices.sort((a: any, b: any) => parseFloat(a.size) - parseFloat(b.size));
+    cleanPrices.sort((a: any, b: any) => parseFloat(a.size) - parseFloat(b.size))
 
     return new Response(JSON.stringify({
       variants: cleanPrices,

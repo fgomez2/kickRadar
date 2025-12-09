@@ -203,7 +203,7 @@ export default function DetalleSneaker() {
 
                         {/* Precio */}
                         <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-xl border border-gray-700/50 p-6">
-                            <p className="text-gray-400 text-sm mb-2">Precio Retail</p>
+                            <p className="text-gray-400 text-sm mb-2">Precio Retail (precio de salida)</p>
                             <p className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-green-600">
                                 {sneaker.precioRetail} €
                             </p>
