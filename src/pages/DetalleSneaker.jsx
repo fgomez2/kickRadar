@@ -4,6 +4,7 @@ import KickHeader from "../components/KickHeader"
 import KickFooter from "../components/KickFooter"
 import useStockxProduct from "../hooks/useStockxProduct"
 import useStockxPrices from "../hooks/useStockxPrices"
+import useGoatPrices from "../hooks/useGoatPrices"
 import TablaPrecios from "../components/TablaPrecios"
 import { supabase } from "../supabase-client"
 
@@ -13,7 +14,17 @@ export default function DetalleSneaker() {
     const { sneaker, cargando, error, cargaCompleta } = useStockxProduct(id)
 
     // HOOK DE PRECIOS de Stockx
-    const { precios, loading: cargandoPrecios } = useStockxPrices(sneaker?.urlKey)
+    const { 
+        precios: preciosStockx,
+        sku: skuDetectado,
+        cargando: cargandoStockx
+    } = useStockxPrices(sneaker?.urlKey)
+
+    // HOOK de PRECIOS de GOAT
+    const { 
+        precios: preciosGoat,
+        cargando: cargandoGoat
+    } = useGoatPrices(skuDetectado)
 
     const [imagenCargada, setImagenCargada] = useState(false)
     const [errorImagen, setErrorImagen] = useState(false)
@@ -21,6 +32,14 @@ export default function DetalleSneaker() {
     // Estados para favoritos
     const [esFavorito, setEsFavorito] = useState(false)
     const [cargandoFavorito, setCargandoFavorito] = useState(false)
+
+    const datosPrecios = {
+        stockx: preciosStockx || [],
+        goat: preciosGoat || []
+    }
+
+    // Si cualquiera de los dos está cargando, mostramos loading en la tabla
+    const tablaCargando = cargandoStockx || cargandoGoat
 
     useEffect(() => {
         const comprobarFavorito = async () => {
@@ -242,7 +261,7 @@ export default function DetalleSneaker() {
                 </div>
                 
                 <div className="max-w-6xl mx-auto">
-                    <TablaPrecios precios={precios} cargando={cargandoPrecios} />
+                    <TablaPrecios precios={datosPrecios} cargando={tablaCargando} />
                 </div>
 
             </main>

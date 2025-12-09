@@ -40,7 +40,7 @@ serve(async (req: Request): Promise<Response> => {
 
     if (!response.ok) {
         console.error(`--> KicksDB Error: ${response.status}`)
-        return new Response(JSON.stringify([]), {
+        return new Response(JSON.stringify({ variants: [], sku: null }), {
             status: 200, // Devolvemos 200 con array vacío para no romper el front (por si)
             headers: { ...corsHeaders, "Content-Type": "application/json" },
         })
@@ -49,7 +49,10 @@ serve(async (req: Request): Promise<Response> => {
     const jsonResponse = await response.json()
     
     // EXTRACCIÓN DE DATOS
-    const variants = jsonResponse.data?.variants || [];
+    const variants = jsonResponse.data?.variants || []
+
+    // EXTRACCIÓN DEL sku
+    const stockxSku = jsonResponse.data?.sku || null
 
     const cleanPrices = variants.map((variant: any) => {
         const askPrice = variant.lowest_ask; 
@@ -73,7 +76,10 @@ serve(async (req: Request): Promise<Response> => {
     // ORDENAR TALLAS: 38, 39, ...
     cleanPrices.sort((a: any, b: any) => parseFloat(a.size) - parseFloat(b.size));
 
-    return new Response(JSON.stringify(cleanPrices), {
+    return new Response(JSON.stringify({
+      variants: cleanPrices,
+      sku: stockxSku
+    }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     })

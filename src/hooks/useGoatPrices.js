@@ -1,22 +1,21 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from "react"
 
-export default function useStockxPrices(urlKey) {
+export default function useGoatPrices(sku) {
     const [precios, setPrecios] = useState([])
-    const [sku, setSku] = useState(null)
     const [cargando, setCargando] = useState(false)
     const [error, setError] = useState(null)
 
     useEffect(() => {
-        if (!urlKey || urlKey === 'undefined') {
+        // Si no hay sku, no se hace nada
+        if (!sku) {
             setPrecios([])
-            setSku(null)
             setCargando(false)
             return
         }
 
         const controller = new AbortController()
 
-        const fetchPrecios = async () => {
+        const fetchGoatPrecios = async () => {
             setCargando(true)
             setError(null)
 
@@ -24,7 +23,7 @@ export default function useStockxPrices(urlKey) {
                 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
                 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
                 
-                const url = `${supabaseUrl}/functions/v1/get-stockx-prices`
+                const url = `${supabaseUrl}/functions/v1/get-goat-prices`
 
                 const response = await fetch(url, {
                     method: 'POST',
@@ -33,39 +32,35 @@ export default function useStockxPrices(urlKey) {
                         'Authorization': `Bearer ${supabaseAnonKey}`,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ urlKey: urlKey }) 
+                    body: JSON.stringify({ sku: sku }) 
                 })
 
-                const textData = await response.text()
-                
+                const textoData = await response.text()
+
                 if (!response.ok) {
-                    throw new Error(`Error servidor (${response.status}): ${textData}`)
+                    throw new Error(`Error servidor (${response.status}): ${textoData}`)
                 }
 
-                const data = JSON.parse(textData)
-
-                if (data.variants) {
-                    setPrecios(data.variants)
-                    setSku(data.sku) // guardamos sku para que lo pueda usar la API de KICKSDB para GOAT
-                } else {
-                    setPrecios(data)
-                }
+                const data = JSON.parse(textoData)
+                setPrecios(data)
 
             } catch (err) {
                 if (err.name === 'AbortError') return
                 console.error('Error con los precios:', err)
                 setError(err.message)
+                setPrecios([])
+
             } finally {
-                setCargando(false)
+                if (!controller.signal.aborted) {
+                    setCargando(false)
+                }
             }
         }
 
-        fetchPrecios()
+        fetchGoatPrecios()
 
-        return () => {
-            controller.abort()
-        }
-    }, [urlKey])
+        return () => controller.abort()
+    }, [sku])
 
-    return { precios, sku, cargando, error }
+    return { precios, cargando, error }
 }
