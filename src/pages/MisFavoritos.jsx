@@ -1,16 +1,77 @@
 import { useEffect, useRef, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import KickHeader from "../components/KickHeader"
 import KickFooter from "../components/KickFooter"
+import { supabase } from "../supabase-client"
 
 export default function MisFavoritos() {
     const headRef = useRef(null)
+    const navigate = useNavigate()
+
     const [favoritos, setFavoritos] = useState([])
+    const [cargando, setCargando] = useState(true)
+    const [error, setError] = useState(null)
 
     useEffect(() => {
         document.title = 'Mis Sneakers Favoritas - KickRadar'
         headRef.current?.focus()
-        // IMPORTANTEEEE (POR HACER): CARGAR FAVORITOS DEL USUARIO DESDE SUPABASE (TABLA FAVORITES)
+
+        const cargarFavoritos = async () => {
+            setCargando(true)
+            setError(null)
+
+            // Obtener el usuario autenticado
+            const { data: { user }, error: userError } = await supabase.auth.getUser()
+
+            if (userError || !user) {
+                setFavoritos([])
+                setCargando(false)
+                return
+            }
+
+            // Traer favoritos desde la tabla favorites
+            const { data, error } = await supabase
+                .from('favorites')
+                .select('*')
+                .eq('user_id', user.id)
+                .order('created_at', { ascending: false })
+            
+            if (error) {
+                console.error('Error al cargar favoritos:', error)
+                setError('No se pudieron cargar los favoritos. Intenta nuevamente más tarde.')
+                setFavoritos([])
+            } else {
+                setFavoritos(data || [])
+            }
+
+            setCargando(false)
+        }
+
+        cargarFavoritos()
     }, [])
+
+    const handleEliminarFavorito = async (productId) => {
+        try {
+            const { data: { user }, error: userError } = await supabase.auth.getUser()
+
+            if (userError || !user) return
+
+            const { error } = await supabase
+                .from('favorites')
+                .delete()
+                .eq('user_id', user.id)
+                .eq('product_id', productId)
+
+            if (error) {
+                console.error('Error al eliminar favorito:', error)
+                return
+            }
+
+            setFavoritos((prev) => prev.filter((fav) => fav.product_id !== productId))
+        } catch (err) {
+            console.error('Error al eliminar favorito:', err)
+        }
+    }
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black flex flex-col">
@@ -38,8 +99,21 @@ export default function MisFavoritos() {
                         </p>
                     </div>
 
+                    {/* Mensajes de carga / error */}
+                    {cargando && (
+                        <div className="text-gray-400 text-center mb-8">
+                            Cargando tus favoritos...
+                        </div>
+                    )}
+
+                    {error && (
+                        <div className="text-red-500 text-center mb-8">
+                            {error}
+                        </div>
+                    )}
+
                     {/* Lista de favoritos */}
-                    {favoritos.length === 0 ? (
+                    {!cargando && favoritos.length === 0 ? (
                         // CUANDO NO HAYA FAVORITOS
                         <div className="max-w-2xl mx-auto">
                             <div className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-3xl shadow-[0_0_60px_rgba(34,197,94,0.25)] 
@@ -68,7 +142,7 @@ export default function MisFavoritos() {
                                         Explora nuestra colección y guarda tus sneakers favoritas para encontrarlas fácilmente más tarde
                                     </p>
 
-                                    <button onClick={() => window.location.href = '/'}
+                                    <button onClick={() => navigate('/')}
                                         className="group relative px-8 py-4 bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white font-bold rounded-xl
                                             transition-all duration-300 shadow-[0_0_30px_rgba(34,197,94,0.4)] hover:shadow-[0_0_40px_rgba(34,197,94,0.6)] hover:scale-105 active:scale-95 overflow-hidden"
                                     >
@@ -91,26 +165,76 @@ export default function MisFavoritos() {
                     ) : (
                         // CUANDO HAYA FAVORITOS
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                            {favoritos.map((sneaker) => (
-                                <div key={sneaker.id} className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 
+                            {favoritos.map((fav) => (
+                                <div key={`${fav.user_id}-${fav.product_id}`} onClick={() => navigate(`/sneakers/${fav.product_id}`)}
+                                    className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 
                                         rounded-2xl shadow-[0_0_30px_rgba(34,197,94,0.2)] border border-green-500/20 p-6
                                         backdrop-blur-sm hover:shadow-[0_0_50px_rgba(34,197,94,0.35)] hover:scale-105 transition-all duration-300 group">
                                     
                                     {/* Botón eliminar favorito */}
-                                    <button className="absolute top-4 right-4 z-10 w-10 h-10 bg-red-500/20 hover:bg-red-500 rounded-full
-                                            flex items-center justify-center transition-all duration-300 opacity-0 group-hover:opacity-100"
+                                    <button onClick={(e) => {
+                                            e.stopPropagation()
+                                            handleEliminarFavorito(fav.product_id)
+                                        }}
+                                        className="absolute top-4 right-4 z-10 group/button flex items-center justify-center w-14 h-14
+                                        bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900
+                                        rounded-full border border-gray-700 hover:border-red-400 transition-all duration-300 hover:scale-110 active:scale-95"
                                         aria-label="Eliminar de favoritos"
                                     >
-                                        <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                                        <svg className="w-6 h-6 text-red-400 fill-red-500 group-hover/button:fill-transparent group-hover/button:text-gray-400 transition-all duration-300" 
+                                            fill="currentColor" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                                         </svg>
+
+                                        <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-3 py-1.5 rounded-lg opacity-0 
+                                            group-hover/button:opacity-100 transition-opacity duration-300 whitespace-nowrap pointer-events-none">
+                                                Quitar de favoritos
+                                            </span>
                                     </button>
 
-                                    {/* Contenido de la card - TODO: personalizar con datos reales */}
-                                    <div className="text-center">
-                                        <div className="text-4xl mb-4">👟</div>
-                                        <h3 className="text-white font-bold text-lg mb-2">{sneaker.name}</h3>
-                                        <p className="text-gray-400 text-sm">{sneaker.brand}</p>
+                                    {/* Contenido de la card */}
+                                    <div className="flex flex-col items-center text-center gap-4">
+                                        <div className="relative w-full h-52 bg-gray-900/60 rounded-xl overflow-hidden flex items-center justify-center">
+                                            {fav.image_url && (
+                                                <img src={fav.image_url} alt={fav.title}
+                                                    className="w-full h-full object-contain"
+                                                    onError={(e) => {
+                                                        // Por si la imagen falla
+                                                        e.currentTarget.style.display = "none"
+                                                        const fallback = e.currentTarget.parentElement?.querySelector(
+                                                            "[data-fallback]"
+                                                        )
+                                                        if (fallback) fallback.classList.remove("hidden")
+                                                    }}
+                                                />
+                                            )}
+
+                                            {/* Icono cuando no hay foto o URL falla */}
+                                            <div data-fallback 
+                                                className={`flex flex-col items-center justify-center text-gray-500 ${fav.image_url ? "hidden" : ""}`}
+                                            >
+                                                <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5z" />
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 10l2.5 3 2-2.5L18 16H6l3-6z" />
+                                                    <circle cx="9" cy="7" r="1.2" />
+                                                </svg>
+                                            </div>
+                                        </div>
+
+                                        {/* Texto */}
+                                        <div>
+                                            <p className="text-xs uppercase tracking-wide text-green-400 mb-1">
+                                                {fav.brand || 'Marca desconocida'}
+                                            </p>
+                                            <h3 className="text-white font-bold text-sm line-clamp-2">
+                                                {fav.title || 'Título desconocido'}
+                                            </h3>
+                                            {fav.price_text && (
+                                                <p className="text-green-400 font-semibold mt-2">
+                                                    {fav.price_text}
+                                                </p>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             ))}
