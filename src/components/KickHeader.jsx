@@ -209,9 +209,11 @@ const KickHeader = forwardRef((props, parentRef) => {
                                     </div>
                                 </div>
 
+                                {/* TO DO - BOTÓN MIS FAVORITOS */}
+                                {/*         PARA MÓVIL          */}
+
                                 {/* Botón cerrar sesión */}
-                                <button 
-                                    onClick={cerrarSesion}
+                                <button onClick={cerrarSesion}
                                     className="w-full flex items-center justify-center gap-2 bg-gray-900 hover:bg-red-900/20 
                                     text-green-400 hover:text-red-400 px-4 py-3 rounded-full text-base font-medium 
                                     transition-all duration-300 border-2 border-green-400 hover:border-red-400

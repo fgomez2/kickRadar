@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"
 import KickHeader from "../components/KickHeader"
 import KickFooter from "../components/KickFooter"
 import { supabase } from "../supabase-client"
+import { format } from "date-fns"
 
 export default function MisFavoritos() {
     const headRef = useRef(null)
@@ -232,6 +233,14 @@ export default function MisFavoritos() {
                                             {fav.price_text && (
                                                 <p className="text-green-400 font-semibold mt-2">
                                                     {fav.price_text}
+                                                </p>
+                                            )}
+                                            {fav.created_at && (
+                                                <p className="text-sm text-gray-400 font-semibold mt-2">
+                                                    Añadida el{" "}  
+                                                    <span className="text-green-400">
+                                                        {format(new Date(fav.created_at), "dd-MM-yyyy 'a las' HH:mm")}
+                                                    </span>
                                                 </p>
                                             )}
                                         </div>

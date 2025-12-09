@@ -3,8 +3,8 @@ import { useParams, useNavigate } from "react-router-dom"
 import KickHeader from "../components/KickHeader"
 import KickFooter from "../components/KickFooter"
 import useStockxProduct from "../hooks/useStockxProduct"
-// 1. IMPORTAMOS EL HOOK Y EL COMPONENTE NUEVO
 import useStockxPrices from "../hooks/useStockxPrices"
+import useGoatPrices from "../hooks/useGoatPrices"
 import TablaPrecios from "../components/TablaPrecios"
 import { supabase } from "../supabase-client"
 
@@ -12,10 +12,19 @@ export default function DetalleSneaker() {
     const { id } = useParams()
     const navigate = useNavigate()
     const { sneaker, cargando, error, cargaCompleta } = useStockxProduct(id)
-    
-    // 2. USAMOS EL HOOK DE PRECIOS
-    // Le pasamos sneaker?.urlKey. Si sneaker es null, no pasa nada, el hook lo controla.
-    const { precios, loading: cargandoPrecios } = useStockxPrices(sneaker?.urlKey)
+
+    // HOOK DE PRECIOS de Stockx
+    const { 
+        precios: preciosStockx,
+        sku: skuDetectado,
+        cargando: cargandoStockx
+    } = useStockxPrices(sneaker?.urlKey)
+
+    // HOOK de PRECIOS de GOAT
+    const { 
+        precios: preciosGoat,
+        cargando: cargandoGoat
+    } = useGoatPrices(skuDetectado)
 
     const [imagenCargada, setImagenCargada] = useState(false)
     const [errorImagen, setErrorImagen] = useState(false)
@@ -23,6 +32,14 @@ export default function DetalleSneaker() {
     // Estados para favoritos
     const [esFavorito, setEsFavorito] = useState(false)
     const [cargandoFavorito, setCargandoFavorito] = useState(false)
+
+    const datosPrecios = {
+        stockx: preciosStockx || [],
+        goat: preciosGoat || []
+    }
+
+    // Si cualquiera de los dos está cargando, mostramos loading en la tabla
+    const tablaCargando = cargandoStockx || cargandoGoat
 
     useEffect(() => {
         const comprobarFavorito = async () => {
@@ -186,11 +203,10 @@ export default function DetalleSneaker() {
 
                         {/* Precio */}
                         <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-xl border border-gray-700/50 p-6">
-                            <p className="text-gray-400 text-sm mb-2">Precio Retail</p>
+                            <p className="text-gray-400 text-sm mb-2">Precio Retail (precio de salida)</p>
                             <p className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-green-600">
                                 {sneaker.precioRetail} €
                             </p>
-                            <p className="text-gray-500 text-sm mt-2">StockX</p>
                         </div>
 
                         {/* Detalles */}
@@ -244,9 +260,8 @@ export default function DetalleSneaker() {
                     </div>
                 </div>
                 
-                {/* 3. AÑADIMOS LA TABLA DE PRECIOS AQUÍ, FUERA DEL GRID DE ARRIBA */}
                 <div className="max-w-6xl mx-auto">
-                    <TablaPrecios precios={precios} cargando={cargandoPrecios} />
+                    <TablaPrecios precios={datosPrecios} cargando={tablaCargando} marca={sneaker?.marca} />
                 </div>
 
             </main>
