@@ -3,7 +3,6 @@ import { useParams, useNavigate } from "react-router-dom"
 import KickHeader from "../components/KickHeader"
 import KickFooter from "../components/KickFooter"
 import useStockxProduct from "../hooks/useStockxProduct"
-// 1. IMPORTAMOS EL HOOK Y EL COMPONENTE NUEVO
 import useStockxPrices from "../hooks/useStockxPrices"
 import TablaPrecios from "../components/TablaPrecios"
 import { supabase } from "../supabase-client"
@@ -12,9 +11,8 @@ export default function DetalleSneaker() {
     const { id } = useParams()
     const navigate = useNavigate()
     const { sneaker, cargando, error, cargaCompleta } = useStockxProduct(id)
-    
-    // 2. USAMOS EL HOOK DE PRECIOS
-    // Le pasamos sneaker?.urlKey. Si sneaker es null, no pasa nada, el hook lo controla.
+
+    // HOOK DE PRECIOS de Stockx
     const { precios, loading: cargandoPrecios } = useStockxPrices(sneaker?.urlKey)
 
     const [imagenCargada, setImagenCargada] = useState(false)
@@ -190,7 +188,6 @@ export default function DetalleSneaker() {
                             <p className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-green-600">
                                 {sneaker.precioRetail} €
                             </p>
-                            <p className="text-gray-500 text-sm mt-2">StockX</p>
                         </div>
 
                         {/* Detalles */}
@@ -244,7 +241,6 @@ export default function DetalleSneaker() {
                     </div>
                 </div>
                 
-                {/* 3. AÑADIMOS LA TABLA DE PRECIOS AQUÍ, FUERA DEL GRID DE ARRIBA */}
                 <div className="max-w-6xl mx-auto">
                     <TablaPrecios precios={precios} cargando={cargandoPrecios} />
                 </div>

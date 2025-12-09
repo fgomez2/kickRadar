@@ -6,7 +6,6 @@ export default function useStockxPrices(urlKey) {
     const [error, setError] = useState(null)
 
     useEffect(() => {
-        // Validación inicial
         if (!urlKey || urlKey === 'undefined') {
             setPrecios([]);
             setCargando(false);
@@ -20,21 +19,18 @@ export default function useStockxPrices(urlKey) {
             setError(null)
 
             try {
-                console.log("Iniciando fetch (POST) para:", urlKey);
-                
                 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
                 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
                 
                 const url = `${supabaseUrl}/functions/v1/get-stockx-prices`
 
                 const response = await fetch(url, {
-                    method: 'POST', // <--- CAMBIO A POST
+                    method: 'POST',
                     signal: controller.signal,
                     headers: {
                         'Authorization': `Bearer ${supabaseAnonKey}`,
-                        'Content-Type': 'application/json' // <--- IMPORTANTE
+                        'Content-Type': 'application/json'
                     },
-                    // Enviamos los datos en el cuerpo
                     body: JSON.stringify({ urlKey: urlKey }) 
                 })
 
@@ -45,7 +41,6 @@ export default function useStockxPrices(urlKey) {
                 }
 
                 const data = JSON.parse(textData)
-                console.log("Precios recibidos:", data) // <--- Verás esto si funciona
                 setPrecios(data)
 
             } catch (err) {
