@@ -10,7 +10,7 @@ if (!rootElement) throw new Error('No se ha encontrado el elemento root')
 const mantenimientoActivo = import.meta.env.VITE_MAINTENANCE === "true"
 
 if (mantenimientoActivo) {
-  // MODO MANTENIMIENTO
+  // MODO MANTENIMIENTO 👷‍♂️👷‍♂️👷‍♂️
   // cambiar la variable de entorno en VERCEL cuando se quiera el MODO NORMAL
   createRoot(rootElement).render(
     <div className="min-h-screen flex items-center justify-center bg-black text-white px-4">
