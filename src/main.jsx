@@ -28,7 +28,7 @@ if (mantenimientoActivo) {
     </div>
   )
 } else {
-  createRoot(document.getElementById('root')).render(
+  createRoot(rootElement).render(
     // MODO NORMAL
     // cambiar la variable de entorno en VERCEL cuando se quiera el MODO MANTENIMIENTO
     <StrictMode>
