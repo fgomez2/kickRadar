@@ -13,7 +13,7 @@ export default function KickFooter() {
                         <p className="text-xs uppercase tracking-[0.2em] text-emerald-300">Sobre nosotros</p>
                         <ul className="space-y-2 text-sm text-gray-300">
                             <li>
-                                <Link to="/quienes-somos" className="hover:text-white transition-colors">Quienes somos</Link>
+                                <Link to="/quienes-somos" className="hover:text-white transition-colors">Quiénes somos</Link>
                             </li>
                         </ul>
                     </div>
