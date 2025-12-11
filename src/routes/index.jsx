@@ -7,6 +7,7 @@ import MisFavoritos from '../pages/MisFavoritos'
 import Callback from '../pages/Callback'
 import BusquedaSneakers from '../pages/BusquedaSneakers'
 import DetalleSneaker from '../pages/DetalleSneaker'
+import QuienesSomos from '../pages/QuienesSomos'
 
 
 export default function AppRoutes() {
@@ -32,6 +33,9 @@ export default function AppRoutes() {
             {/* Rutas públicas */}
             {/* Ruta callback OAuth */}
             <Route path="/callback" element={<Callback />} />
+
+            {/* Rutas del footer */}
+            <Route path="/quienes-somos" element={<QuienesSomos />} />
             
             {/* /* <Route path="/sobrenosotros" element={<SobreNosotros />} /> */}
 
