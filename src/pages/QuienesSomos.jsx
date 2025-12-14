@@ -54,7 +54,8 @@ export default function QuienesSomos() {
                             Me encanta aprender de la comunidad.
                         </p>
                         <div className="mt-6 flex justify-center">
-                            <a href="mailto:fergg424@gmail.com" className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-emerald-500 text-black font-semibold hover:bg-emerald-400 transition-colors shadow-[0_0_20px_rgba(34,197,94,0.3)]">
+                            <a href="mailto:fergg424@gmail.com" className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-green-400 hover:bg-green-500 text-white text-lg font-semibold transition-all duration-300 
+                                shadow-[0_0_20px_rgba(34,197,94,0.5)] hover:shadow-[0_0_35px_rgba(34,197,94,0.9)] hover:scale-105 active:scale-95 transform hover:-translate-y-1">
                                 Escríbeme
                             </a>
                         </div>
