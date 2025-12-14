@@ -119,7 +119,7 @@ export default function DetalleSneaker() {
 
     if (cargando || !cargaCompleta) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black flex flex-col">
+            <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black flex flex-col">
                 <KickHeader />
                 <main className="flex-grow flex items-center justify-center">
                     <div className="flex flex-col items-center">
@@ -139,7 +139,7 @@ export default function DetalleSneaker() {
 
     if (!sneaker && !cargando && cargaCompleta) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black flex flex-col">
+            <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black flex flex-col">
                 <KickHeader />
                 <main className="flex-grow flex items-center justify-center">
                     <div className="text-center">
@@ -157,7 +157,7 @@ export default function DetalleSneaker() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black flex flex-col">
+        <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black flex flex-col">
             <KickHeader />
             
             <main className="flex-grow container mx-auto px-4 py-8 md:py-12">

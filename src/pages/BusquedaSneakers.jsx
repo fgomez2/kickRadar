@@ -11,7 +11,7 @@ export default function BusquedaSneakers() {
     const { sneakers, cargando, error } = useStockxSearch(termino)
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black flex flex-col">
+        <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black flex flex-col">
             <KickHeader />
             
             <main className="flex-grow container mx-auto px-3 sm:px-4 md:px-6 py-6 sm:py-8 md:py-12">
