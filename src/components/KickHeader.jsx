@@ -1,5 +1,5 @@
 import { useState, forwardRef, useImperativeHandle, useRef } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import estilosHeader from './KickHeader.module.css'
 import { useAuth } from '../modules/auth/AuthProvider'
 import { supabase } from '../supabase-client'
@@ -11,6 +11,8 @@ const KickHeader = forwardRef((props, parentRef) => {
     const {estaAutenticado, usuario, perfil, cerrarSesion} = useAuth()
 
     const navigate = useNavigate()
+    const location = useLocation()
+    const estamosEnFavoritos = location.pathname === '/misFavoritos'
 
     const handleBusqueda = (e) => {
         e.preventDefault()
@@ -110,17 +112,19 @@ const KickHeader = forwardRef((props, parentRef) => {
                             </Link>
 
                             {/* Botón favoritos */}
-                            <Link to="/misFavoritos">
-                                <button className="group relative p-3 bg-gray-900 hover:bg-gray-800 border-2 border-green-400 
-                                    hover:border-red-400 rounded-full transition-all duration-300 shadow-[0_0_15px_rgba(34,197,94,0.4)] hover:shadow-[0_0_25px_rgba(239,68,68,0.6)] 
-                                    hover:scale-110 active:scale-95"
-                                    aria-label="Mis favoritos" title="Mis favoritos"
-                                >
-                                    <svg className="w-6 h-6 text-green-400 group-hover:text-red-500 transition-all duration-300 group-hover:fill-red-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                                    </svg>
-                                </button>
-                            </Link>
+                            {!estamosEnFavoritos && (
+                                <Link to="/misFavoritos">
+                                    <button className="group relative p-3 bg-gray-900 hover:bg-gray-800 border-2 border-green-400 
+                                        hover:border-red-400 rounded-full transition-all duration-300 shadow-[0_0_15px_rgba(34,197,94,0.4)] hover:shadow-[0_0_25px_rgba(239,68,68,0.6)] 
+                                        hover:scale-110 active:scale-95"
+                                        aria-label="Mis favoritos" title="Mis favoritos"
+                                    >
+                                        <svg className="w-6 h-6 text-green-400 group-hover:text-red-500 transition-all duration-300 group-hover:fill-red-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                                        </svg>
+                                    </button>
+                                </Link>
+                            )}
 
                             {/* Botón de cerrar sesión */}
                             <button onClick={cerrarSesion}
@@ -209,8 +213,21 @@ const KickHeader = forwardRef((props, parentRef) => {
                                     </div>
                                 </div>
 
-                                {/* TO DO - BOTÓN MIS FAVORITOS */}
-                                {/*         PARA MÓVIL          */}
+                                {/* Botón mis favoritos */}
+                                {!estamosEnFavoritos && (
+                                    <Link to="/misFavoritos">
+                                        <button className="group w-full flex items-center justify-center gap-2 bg-gray-900 hover:bg-gray-800 
+                                        text-green-400 hover:text-red-400 px-4 py-3 rounded-full text-base font-medium 
+                                        transition-all duration-300 border-2 border-green-400 hover:border-red-400
+                                        shadow-[0_0_10px_rgba(34,197,94,0.4)] hover:shadow-[0_0_25px_rgba(239,68,68,0.6)] hover:scale-105 active:scale-95"
+                                        >
+                                            <svg className="w-5 h-5 text-green-400 group-hover:text-red-500 group-hover:fill-red-500 transition-all duration-300" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                                            </svg>
+                                            Mis favoritos
+                                        </button>
+                                    </Link>
+                                )}
 
                                 {/* Botón cerrar sesión */}
                                 <button onClick={cerrarSesion}
