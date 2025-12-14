@@ -226,10 +226,10 @@ export default function MiPerfil() {
     if (!estaAutenticado) return null
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black flex flex-col">
+        <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black flex flex-col">
             <KickHeader />
             
-            <div className="flex-grow container mx-auto px-3 sm:px-4 md:px-6 py-6 sm:py-8 md:py-12">
+            <div className="flex-grow px-4 py-12">
                 <div className="max-w-4xl mx-auto">
                     <div className="mb-6 sm:mb-8">
                         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-green-600 mb-2">

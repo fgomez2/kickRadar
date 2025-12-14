@@ -75,7 +75,7 @@ export default function MisFavoritos() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black flex flex-col">
+        <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black flex flex-col">
             <KickHeader ref={headRef} />
             
             {/* Contenido principal */}
