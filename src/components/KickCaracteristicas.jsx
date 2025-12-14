@@ -14,8 +14,8 @@ export default function KickCaracteristicas({ onComenzarClick }) {
         },
         {
             id: 2,
-            titulo: "Búsqueda Avanzada",
-            descripcion: "Filtra por marca, modelo, talla y precio. Encuentra exactamente lo que buscas en segundos.",
+            titulo: "Búsqueda de Zapatillas",
+            descripcion: "Busca sneakers de cualquier marca: Nike, Adidas, Jordan, New Balance y muchas más. Todo en un solo lugar.",
             icono: (
                 <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -34,27 +34,6 @@ export default function KickCaracteristicas({ onComenzarClick }) {
         },
         {
             id: 4,
-            titulo: "Alertas de Precio",
-            descripcion: "Recibe notificaciones cuando tus sneakers favoritas bajen de precio. No te pierdas ninguna oferta.",
-            icono: (
-                <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                </svg>
-            )
-        },
-        {
-            // Dejo este comentario para pensarme si dejo esta caracteristica o no
-            id: 5,
-            titulo: "Historial de Precios",
-            descripcion: "Consulta la evolución del precio a lo largo del tiempo. Compra en el momento ideal.",
-            icono: (
-                <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-            )
-        },
-        {
-            id: 6,
             titulo: "Favoritos",
             descripcion: "Crea listas personalizadas con tus sneakers preferidas. Accede a ellas cuando quieras.",
             icono: (
@@ -78,8 +57,8 @@ export default function KickCaracteristicas({ onComenzarClick }) {
                     </p>
                 </div>
 
-                {/* Grid con las 6 caracteristicas */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
+                {/* Grid con las 4 caracteristicas */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 max-w-4xl mx-auto">
                     {caracteristicas.map((caracteristica) => (
                         <div 
                             key={caracteristica.id}
