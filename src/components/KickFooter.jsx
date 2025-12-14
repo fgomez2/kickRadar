@@ -20,8 +20,12 @@ export default function KickFooter() {
                     <div className="space-y-3">
                         <p className="text-xs uppercase tracking-[0.2em] text-emerald-300">Legal</p>
                         <ul className="space-y-2 text-sm text-gray-300">
-                            <li><a href="#" className="hover:text-white transition-colors">Términos de uso</a></li>
-                            <li><a href="#" className="hover:text-white transition-colors">Privacidad</a></li>
+                            <li>
+                                <Link to="/terminos-de-uso" className="hover:text-white transition-colors">Términos de uso</Link>
+                            </li>
+                            <li>
+                                <Link to="/politica-de-privacidad" className="hover:text-white transition-colors">Política de privacidad</Link>
+                            </li>
                         </ul>
                     </div>
                     <div className="space-y-3">

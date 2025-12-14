@@ -8,6 +8,8 @@ import Callback from '../pages/Callback'
 import BusquedaSneakers from '../pages/BusquedaSneakers'
 import DetalleSneaker from '../pages/DetalleSneaker'
 import QuienesSomos from '../pages/QuienesSomos'
+import TerminosDeUso from '../pages/TerminosDeUso'
+import PoliticaDePrivacidad from '../pages/PoliticaDePrivacidad'
 
 
 export default function AppRoutes() {
@@ -36,6 +38,8 @@ export default function AppRoutes() {
 
             {/* Rutas del footer */}
             <Route path="/quienes-somos" element={<QuienesSomos />} />
+            <Route path="/terminos-de-uso" element={<TerminosDeUso />} />
+            <Route path="/politica-de-privacidad" element={<PoliticaDePrivacidad />} />
             
             {/* /* <Route path="/sobrenosotros" element={<SobreNosotros />} /> */}
 
