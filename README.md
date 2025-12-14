@@ -31,6 +31,7 @@ Este proyecto fue desarrollado como **Trabajo Final de Grado** del ciclo superio
 - ❤️ **Lista de favoritos** - Guarda y gestiona tus sneakers preferidas
 - 👤 **Perfil de usuario** - Autenticación segura con avatar personalizable
 - 📱 **Responsive Design** - Experiencia optimizada para móviles, tablets y escritorio
+- 📜 **Transparencia legal** - Términos de uso y política de privacidad GDPR
 
 ---
 
@@ -123,13 +124,14 @@ kickRadar/
 │       └── logo_radar.png   # Logo de kickRadar
 ├── src/
 │   ├── components/          # Componentes reutilizables
-│   │   ├── KickHeader.jsx
-│   │   ├── KickMain.jsx
-│   │   ├── KickFooter.jsx
-│   │   ├── KickCaracteristicas.jsx
-│   │   ├── KickCarruselMarcas.jsx
-│   │   ├── TarjetaSneaker.jsx
-│   │   └── TablaPrecios.jsx
+│   │   ├── KickHeader.jsx          # Navegación principal
+│   │   ├── KickHeaderAuth.jsx      # Header autenticado
+│   │   ├── KickMain.jsx            # Hero section
+│   │   ├── KickFooter.jsx          # Footer con enlaces legales
+│   │   ├── KickCaracteristicas.jsx # Sección de features
+│   │   ├── KickCarruselMarcas.jsx  # Carrusel de marcas
+│   │   ├── TarjetaSneaker.jsx      # Card de sneaker
+│   │   └── TablaPrecios.jsx        # Comparador de precios
 │   ├── pages/               # Páginas/Vistas
 │   │   ├── Home.jsx
 │   │   ├── AuthPage.jsx
@@ -137,7 +139,9 @@ kickRadar/
 │   │   ├── DetalleSneaker.jsx
 │   │   ├── MiPerfil.jsx
 │   │   ├── MisFavoritos.jsx
-│   │   └── QuienesSomos.jsx
+│   │   ├── QuienesSomos.jsx
+│   │   ├── TerminosDeUso.jsx
+│   │   └── PoliticaDePrivacidad.jsx
 │   ├── hooks/               # Custom hooks
 │   │   ├── useStockxSearch.js
 │   │   ├── useStockxProduct.js
@@ -197,6 +201,12 @@ kickRadar/
 - Gestión de cuenta
 - Eliminación de cuenta
 
+### 📜 Información legal
+- Términos de uso y condiciones del servicio
+- Política de privacidad conforme a GDPR
+- Derechos del usuario y protección de datos
+- Información sobre cookies y terceros
+
 ---
 
 ## 🌐 Rutas de la aplicación
@@ -210,6 +220,8 @@ kickRadar/
 | `/miPerfil` | Perfil de usuario |
 | `/misFavoritos` | Lista de favoritos |
 | `/quienes-somos` | Información del proyecto |
+| `/terminos-de-uso` | Términos de uso y condiciones |
+| `/politica-de-privacidad` | Política de privacidad y protección de datos |
 
 ---
 
