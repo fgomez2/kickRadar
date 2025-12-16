@@ -1,11 +1,6 @@
-import { createContext, useContext, useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { supabase } from '../../supabase-client'
-
-const AuthContext = createContext({ 
-    sesion: null, 
-    usuario: null, 
-    cargando: true
-})
+import { AuthContext } from './AuthContext'
 
 export function AuthProvider({ children }) {
     const [sesion, setSesion] = useState(null)
@@ -164,12 +159,4 @@ export function AuthProvider({ children }) {
             )}
         </AuthContext.Provider>
     )
-}
-
-export function useAuth() {
-    const context = useContext(AuthContext)
-    if (context === undefined) {
-        throw new Error('useAuth debe ser usado dentro de un AuthProvider')
-    }
-    return context
 }
