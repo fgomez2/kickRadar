@@ -11,7 +11,7 @@ import { supabase } from "../supabase-client"
 export default function DetalleSneaker() {
     const { id } = useParams()
     const navigate = useNavigate()
-    const { sneaker, cargando, error, cargaCompleta } = useStockxProduct(id)
+    const { sneaker, cargando, cargaCompleta } = useStockxProduct(id)
 
     // HOOK DE PRECIOS de Stockx
     const { 
