@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../supabase-client'
-import { useAuth } from '../modules/auth/AuthProvider'
+import { useAuth } from '../modules/auth/AuthContext'
 import KickHeaderAuth from '../components/KickHeaderAuth'
 
 export default function AuthPage() {
