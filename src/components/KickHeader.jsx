@@ -1,7 +1,7 @@
 import { useState, forwardRef, useImperativeHandle, useRef } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import estilosHeader from './KickHeader.module.css'
-import { useAuth } from '../modules/auth/AuthProvider'
+import { useAuth } from '../modules/auth/AuthContext'
 import { supabase } from '../supabase-client'
 
 const KickHeader = forwardRef((props, parentRef) => {
