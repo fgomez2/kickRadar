@@ -12,7 +12,7 @@ const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
 // CORS headers - Permitir todas las origins (incluyendo ngrok)
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-cron-secret',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
@@ -20,6 +20,17 @@ serve(async (req) => {
   // (preflight CORS)
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
+  }
+
+  // PROTEGER ENDPOINT PARA QUE SOLO LO LLAME CRON
+  const cronSecret = Deno.env.get('CRON_SECRET')
+  const incoming = req.headers.get('x-cron-secret')
+
+  if (!cronSecret || incoming !== cronSecret) {
+    return new Response(
+      JSON.stringify({ error: 'No autorizado' }),
+      { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+    )
   }
 
   try {
@@ -38,12 +49,14 @@ serve(async (req) => {
       )
     }
 
-    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+      auth: { persistSession: false },
+    })
 
     // Leer refresh_token desde la tabla stockx_credentials
     const { data: creds, error: credsError } = await supabase
       .from('stockx_credentials')
-      .select('id, refresh_token')
+      .select('id, refresh_token, token_expires_at')
       .limit(1)
       .maybeSingle()
 
@@ -60,6 +73,22 @@ serve(async (req) => {
         JSON.stringify({ error: 'No hay refresh_token almacenado para StockX' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
       )
+    }
+
+    // Si quedan + de 45 min, no se refresca
+    if (creds.token_expires_at) {
+      const expiresAtMs = new Date(creds.token_expires_at).getTime()
+      const msLeft = expiresAtMs - Date.now()
+      if (msLeft > 45 * 60 * 1000) {
+        return new Response(
+          JSON.stringify({ 
+            message: 'El token de acceso aún es válido, no se renueva.',
+            refreshed: false,
+            token_expires_at: creds.token_expires_at,
+          }),
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+        )
+      }
     }
 
     // LLAMADA A STOCKX PARA RENOVAR EL TOKEN con grant_type=refresh_token
@@ -90,6 +119,7 @@ serve(async (req) => {
     }
 
     const newAccessToken = data.access_token
+    const newRefreshToken = data.refresh_token ?? refreshToken
     const expiresIn = data.expires_in // 43200 segundos (12 horas) segun la doc de Stockx
     const expiresAt = new Date(Date.now() + expiresIn * 1000).toISOString()
 
@@ -98,6 +128,7 @@ serve(async (req) => {
       .from('stockx_credentials')
       .update({
         access_token: newAccessToken,
+        refresh_token: newRefreshToken,
         token_expires_at: expiresAt,
         updated_at: new Date().toISOString(),
       })
@@ -110,10 +141,12 @@ serve(async (req) => {
       )
     }
 
+    // NO DEVOLVEMOS EL TOKEN
     return new Response(
       JSON.stringify({
         message: 'access_token renovado exitosamente',
-        access_token: newAccessToken,
+        refreshed: true,
+        token_expires_at: expiresAt,
       }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
     )
