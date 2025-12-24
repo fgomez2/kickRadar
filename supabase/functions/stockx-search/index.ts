@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts"
+import { getStockxAccessToken } from "../_shared/stockx.ts"
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -24,7 +25,19 @@ serve(async (req: Request): Promise<Response> => {
   }
 
   const apiKey = Deno.env.get("STOCKX_API_KEY")
-  const accessToken = Deno.env.get("STOCKX_ACCESS_TOKEN")
+
+  // Obtener el token de acceso CON LA FUNCIÓN CREADA
+  let accessToken: string
+  
+  try {
+    accessToken = await getStockxAccessToken()
+  } catch (e) {
+    console.error(e)
+    return new Response(
+      JSON.stringify({ error: "No se pudo obtener el token de acceso de StockX." }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" }, },
+    )
+  }
 
   if (!apiKey || !accessToken) {
     return new Response(
