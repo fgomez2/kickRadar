@@ -173,14 +173,14 @@ kickRadar/
 
 ### 🔐 Autenticación
 - Registro e inicio de sesión con email/password
-- Autenticación OAuth (Google, GitHub)
+- Autenticación OAuth (Google) PENDIENTE
 - Gestión de sesión persistente
 - Avatar personalizable
 
 ### 🔍 Búsqueda de sneakers
 - Búsqueda en tiempo real
 - Filtrado por categoría (sneakers)
-- Resultados paginados (15 por página)
+- Resultados paginados (15 por página) PENDIENTE
 - Integración con StockX API
 
 ### 💰 Comparación de precios
@@ -253,7 +253,7 @@ El proyecto utiliza una paleta de colores oscura con acentos en verde (#34D399 /
 - **Cuerpo**: Inter Tight Variable
 
 ### Iconos
-- **Heroicons** - Iconos SVG de Tailwind Labs
+- **Heroicons** - Iconos SVG
 
 ---
 
