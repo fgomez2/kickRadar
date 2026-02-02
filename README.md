@@ -38,11 +38,10 @@ Este proyecto fue desarrollado como **Trabajo Final de Grado** del ciclo superio
 ## 🛠️ Tecnologías utilizadas
 
 ### Frontend
-- **React 19.1** - Librería de UI con hooks modernos
-- **Vite 7.1** - Build tool ultrarrápido
-- **React Router v7** - Enrutamiento declarativo
-- **Tailwind CSS 4.1** - Framework CSS utility-first
-- **Anime.js** - Animaciones fluidas
+- **React 19** - Librería de UI con hooks modernos
+- **Vite** - Build tool ultrarrápido
+- **React Router** - Enrutamiento declarativo
+- **Tailwind CSS** - Framework CSS utility-first
 
 ### Backend & Servicios
 - **Supabase** - Backend as a Service (BaaS)
