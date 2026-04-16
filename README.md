@@ -38,11 +38,10 @@ Este proyecto fue desarrollado como **Trabajo Final de Grado** del ciclo superio
 ## 🛠️ Tecnologías utilizadas
 
 ### Frontend
-- **React 19.1** - Librería de UI con hooks modernos
-- **Vite 7.1** - Build tool ultrarrápido
-- **React Router v7** - Enrutamiento declarativo
-- **Tailwind CSS 4.1** - Framework CSS utility-first
-- **Anime.js** - Animaciones fluidas
+- **React 19** - Librería de UI con hooks modernos
+- **Vite** - Build tool ultrarrápido
+- **React Router** - Enrutamiento declarativo
+- **Tailwind CSS** - Framework CSS utility-first
 
 ### Backend & Servicios
 - **Supabase** - Backend as a Service (BaaS)
@@ -174,14 +173,14 @@ kickRadar/
 
 ### 🔐 Autenticación
 - Registro e inicio de sesión con email/password
-- Autenticación OAuth (Google, GitHub)
+- Autenticación OAuth (Google) PENDIENTE
 - Gestión de sesión persistente
 - Avatar personalizable
 
 ### 🔍 Búsqueda de sneakers
 - Búsqueda en tiempo real
 - Filtrado por categoría (sneakers)
-- Resultados paginados (15 por página)
+- Resultados paginados (15 por página) PENDIENTE
 - Integración con StockX API
 
 ### 💰 Comparación de precios
@@ -254,7 +253,7 @@ El proyecto utiliza una paleta de colores oscura con acentos en verde (#34D399 /
 - **Cuerpo**: Inter Tight Variable
 
 ### Iconos
-- **Heroicons** - Iconos SVG de Tailwind Labs
+- **Heroicons** - Iconos SVG
 
 ---
 
