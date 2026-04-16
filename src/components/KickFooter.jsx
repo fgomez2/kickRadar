@@ -45,7 +45,7 @@ export default function KickFooter() {
                     </div>
                 </div>
                 <div className="text-center text-xs text-gray-400">
-                    <p>&copy; 2025 KickRadar. Todos los derechos reservados.</p>
+                    <p>&copy; 2026 KickRadar. Todos los derechos reservados.</p>
                 </div>
             </div>
         </footer>
