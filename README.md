@@ -17,6 +17,9 @@ Explora. Compara. Acierta.
 
 ---
 
+## Enlace
+*https://kick-radar.vercel.app/*
+
 ## 📋 Descripción
 
 **kickRadar** es una aplicación web moderna diseñada para los amantes de las sneakers. Permite buscar, comparar precios y rastrear zapatillas de diferentes marcas en tiempo real, integrando datos de múltiples marketplaces como **StockX** y **GOAT**.
