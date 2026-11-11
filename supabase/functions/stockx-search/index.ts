@@ -8,6 +8,9 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "GET, OPTIONS",
 }
 
+// Resultados por página que se piden a StockX
+const TAMANO_PAGINA = 15
+
 serve(async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders })
@@ -15,6 +18,10 @@ serve(async (req: Request): Promise<Response> => {
 
   const { searchParams } = new URL(req.url)
   const query = searchParams.get("query")
+
+  // Página pedida (empieza en 1). Si no viene o no es válida, la primera
+  const pageParam = Number(searchParams.get("page") ?? "1")
+  const page = Number.isInteger(pageParam) && pageParam >= 1 ? pageParam : 1
 
   if (!query) {
     return new Response(
@@ -46,7 +53,7 @@ serve(async (req: Request): Promise<Response> => {
     )
   }
 
-  const stockxUrl = `https://api.stockx.com/v2/catalog/search` + `?query=${encodeURIComponent(query)}` + `&productCategory=sneakers&pageNumber=1&pageSize=15`
+  const stockxUrl = `https://api.stockx.com/v2/catalog/search` + `?query=${encodeURIComponent(query)}` + `&productCategory=sneakers&pageNumber=${page}&pageSize=${TAMANO_PAGINA}`
 
   try {
     const response = await fetch(stockxUrl, {

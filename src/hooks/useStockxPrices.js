@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 export default function useStockxPrices(urlKey) {
     const [precios, setPrecios] = useState([])
     const [sku, setSku] = useState(null)
+    const [imagen, setImagen] = useState({ urlKey: null, url: null }) // imagen real del producto (viene de KicksDB)
     const [cargando, setCargando] = useState(false)
     const [error, setError] = useState(null)
 
@@ -47,6 +48,8 @@ export default function useStockxPrices(urlKey) {
                 if (data.variants) {
                     setPrecios(data.variants)
                     setSku(data.sku) // guardamos sku para que lo pueda usar la API de KICKSDB para GOAT
+                    // KicksDB manda una miniatura (w=140): sin los parámetros el CDN devuelve la imagen a tamaño completo
+                    setImagen({ urlKey, url: data.image ? data.image.split('?')[0] : null })
                 } else {
                     setPrecios(data)
                 }
@@ -67,5 +70,6 @@ export default function useStockxPrices(urlKey) {
         }
     }, [urlKey])
 
-    return { precios, sku, cargando, error }
+    // La imagen solo vale para el producto con el que se pidió
+    return { precios, sku, imagen: imagen.urlKey === urlKey ? imagen.url : null, cargando, error }
 }

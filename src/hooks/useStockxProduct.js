@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { generarUrlsImagen } from '../utils/stockxImagenes'
 
 export default function useStockxProduct(productId) {
     const [sneaker, setSneaker] = useState(null)
@@ -61,48 +62,7 @@ export default function useStockxProduct(productId) {
                     throw new Error('Producto no encontrado')
                 }
 
-                const formatearUrlKey = (urlKey) => {
-                    if (!urlKey) return null
-                    
-                    // Division por guiones
-                    const palabras = urlKey.split('-')
-                    
-                    // Lista de siglas comunes mayus
-                    const siglas = ['og', 'ps', 'gs', 'td', 'bp', 'se', 'lx', 'sp', 'af', 'qs', 'pe', 'rnr', 'mx']
-                    
-                    // Poner primera letra de cada palabra en mayus
-                    const palabrasMayus = palabras.map((palabra, index) => {
-                        if (!palabra) return ''
-                        
-                        const palabraLower = palabra.toLowerCase()
-                        
-                        // Si es 'adidas' en la primera posición, mantenerla en minúsculas
-                        if (index === 0 && palabraLower === 'adidas') {
-                            return 'adidas'
-                        }
-                        
-                        // Si la palabra está en la lista de siglas, ponerla en mayúsculas
-                        if (siglas.includes(palabraLower)) {
-                            return palabraLower.toUpperCase()
-                        }
-                        
-                        if (/^\d+$/.test(palabra)) {
-                            return palabra
-                        }
-                        
-                        // Casos especiales de mezcla (ej V2)
-                        if (/^v\d+$/i.test(palabra)) {
-                            return palabra.toUpperCase()
-                        }
-                        
-                        // Mayus primera letra y el resto minusculas
-                        return palabra.charAt(0).toUpperCase() + palabra.slice(1).toLowerCase()
-                    })
-                    
-                    return palabrasMayus.join('-')
-                }
-
-                const urlKeyFormateado = formatearUrlKey(producto.urlKey)
+                const imagenesCandidatas = generarUrlsImagen({ urlKey: producto.urlKey, titulo: producto.title })
 
                 // Normalizar datos
                 const sneakerNormalizada = {
@@ -112,7 +72,8 @@ export default function useStockxProduct(productId) {
                     tipo: producto.productType,
                     styleId: producto.styleId,
                     urlKey: producto.urlKey,
-                    imagenUrl: urlKeyFormateado ? `https://images.stockx.com/images/${urlKeyFormateado}-Product.jpg` : null,
+                    imagenUrl: imagenesCandidatas[0] ?? null,
+                    imagenesCandidatas,
                     precioRetail: producto.productAttributes?.retailPrice ?? null,
                     colores: producto.productAttributes?.colorway ?? null,
                     genero: producto.productAttributes?.gender ?? null,

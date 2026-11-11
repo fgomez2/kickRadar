@@ -1,13 +1,18 @@
 import { useState, useEffect } from 'react'
+import { generarUrlsImagen } from '../utils/stockxImagenes'
 
-export default function useStockxSearch(busqueda) {
+const SIN_PAGINACION = { total: null, totalPaginas: null, hayMas: false }
+
+export default function useStockxSearch(busqueda, pagina = 1) {
     const [sneakers, setSneakers] = useState([])
+    const [paginacion, setPaginacion] = useState(SIN_PAGINACION)
     const [cargando, setCargando] = useState(!!busqueda)
     const [error, setError] = useState(null)
 
     useEffect(() => {
         if (!busqueda) {
             setSneakers([])
+            setPaginacion(SIN_PAGINACION)
             setCargando(false)
             setError(null)
             return
@@ -20,10 +25,8 @@ export default function useStockxSearch(busqueda) {
             setError(null)
 
             try {
-                // AQUÍ IRA LA LÓGICA DE BÚSQUEDA EN STOCKX
-                // 1. Obtener el access token y x-api-key de Supabase
-                // 2. llamar a la api de stockx con la búsqueda
-                // 3. guardar los resultados en el estado sneakers
+                // La búsqueda pasa por la Edge Function stockx-search, que llama a la API de StockX
+                // con el access token y la x-api-key guardados en Supabase
                 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
                 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
@@ -31,7 +34,7 @@ export default function useStockxSearch(busqueda) {
                     throw new Error('No se pudo obtener la URL de Supabase de las variables de entorno')
                 }
 
-                const url = `${supabaseUrl}/functions/v1/stockx-search?query=${encodeURIComponent(busqueda)}`
+                const url = `${supabaseUrl}/functions/v1/stockx-search?query=${encodeURIComponent(busqueda)}&page=${pagina}`
 
                 const response = await fetch(url, {
                     method: 'GET',
@@ -49,87 +52,63 @@ export default function useStockxSearch(busqueda) {
 
                 const data = await response.json()
 
+                // Datos de paginación que devuelve StockX junto a los productos.
+                // count cuenta todo lo que coincide (también lo que no son sneakers), así que es orientativo
+                const total = Number.isFinite(data?.count) ? data.count : null
+                const tamanoPagina = data?.pageSize > 0 ? data.pageSize : 15
+
+                setPaginacion({
+                    total,
+                    totalPaginas: total !== null ? Math.max(1, Math.ceil(total / tamanoPagina)) : null,
+                    hayMas: Boolean(data?.hasNextPage),
+                })
+
                 // Validar estructura de respuesta (puede ser "products" o "Products")
                 const productos = data?.products || data?.Products || []
-                
+
                 if (!Array.isArray(productos) || productos.length === 0) {
                     setSneakers([])
                     return
-                } else {
-                    // Filtro adicional por si la API no respeta el parámetro productCategory
-                    const soloSneakers = productos.filter((p) =>
-                        (p.productType && p.productType.toLowerCase() === 'sneakers') ||
-                        (p.category && p.category.toLowerCase() === 'sneakers')
-                    )
-
-                    const formatearUrlKey = (urlKey) => {
-                        if (!urlKey) return null
-                        
-                        // Division por guiones
-                        const palabras = urlKey.split('-')
-                        
-                        // Lista de siglas comunes mayus
-                        const siglas = ['og', 'ps', 'gs', 'td', 'bp', 'se', 'lx', 'sp', 'af', 'qs', 'pe', 'rnr', 'mx']
-                        
-                        // Poner primera letra de cada palabra en mayus
-                        const palabrasMayus = palabras.map((palabra, index) => {
-                            if (!palabra) return ''
-                            
-                            const palabraLower = palabra.toLowerCase()
-                            
-                            // Si es 'adidas' en la primera posición, mantenerla en minúsculas
-                            if (index === 0 && palabraLower === 'adidas') {
-                                return 'adidas'
-                            }
-                            
-                            // Si la palabra está en la lista de siglas, ponerla en mayúsculas
-                            if (siglas.includes(palabraLower)) {
-                                return palabraLower.toUpperCase()
-                            }
-                            
-                            if (/^\d+$/.test(palabra)) {
-                                return palabra
-                            }
-                            
-                            // Casos especiales de mezcla (ej V2)
-                            if (/^v\d+$/i.test(palabra)) {
-                                return palabra.toUpperCase()
-                            }
-                            
-                            // Mayus primera letra y el resto minusculas
-                            return palabra.charAt(0).toUpperCase() + palabra.slice(1).toLowerCase()
-                        })
-                        
-                        return palabrasMayus.join('-')
-                    }
-
-                    // Normalizar datos
-                    const normalizados = soloSneakers.map((p) => {
-                        const urlKeyFormateado = formatearUrlKey(p.urlKey)
-                        
-                        return {
-                            id: p.productId,
-                            titulo: p.title,
-                            marca: p.brand,
-                            tipo: p.productType,
-                            styleId: p.styleId,
-                            urlKey: p.urlKey,
-                            imagenUrl: urlKeyFormateado ? `https://images.stockx.com/images/${urlKeyFormateado}-Product.jpg` : null,
-                            precioRetail: p.productAttributes?.retailPrice ?? null,
-                            colores: p.productAttributes?.colorway ?? null,
-                            genero: p.productAttributes?.gender ?? null,
-                            fechaDeSalida: p.productAttributes?.releaseDate ?? null,
-                        }
-                    })
-
-                    setSneakers(normalizados)
                 }
+
+                // Filtro adicional por si la API no respeta el parámetro productCategory
+                const soloSneakers = productos.filter((p) =>
+                    (p.productType && p.productType.toLowerCase() === 'sneakers') ||
+                    (p.category && p.category.toLowerCase() === 'sneakers')
+                )
+
+                // Normalizar datos
+                const normalizados = soloSneakers.map((p) => {
+                    const imagenesCandidatas = generarUrlsImagen({ urlKey: p.urlKey, titulo: p.title })
+
+                    return {
+                        id: p.productId,
+                        titulo: p.title,
+                        marca: p.brand,
+                        tipo: p.productType,
+                        styleId: p.styleId,
+                        urlKey: p.urlKey,
+                        imagenUrl: imagenesCandidatas[0] ?? null,
+                        imagenesCandidatas,
+                        precioRetail: p.productAttributes?.retailPrice ?? null,
+                        colores: p.productAttributes?.colorway ?? null,
+                        genero: p.productAttributes?.gender ?? null,
+                        fechaDeSalida: p.productAttributes?.releaseDate ?? null,
+                    }
+                })
+
+                setSneakers(normalizados)
             } catch (err) {
                 if (err.name === 'AbortError') return // La solicitud fue abortada
                 console.error('Error al buscar sneakers en StockX:', err)
                 setError('Error al buscar sneakers. Por favor, inténtalo de nuevo más tarde.')
+                setSneakers([])
+                setPaginacion(SIN_PAGINACION)
             } finally {
-                setCargando(false)
+                // Si se abortó es porque ya hay otra búsqueda en marcha: no se toca su estado de carga
+                if (!controller.signal.aborted) {
+                    setCargando(false)
+                }
             }
         }
 
@@ -138,8 +117,8 @@ export default function useStockxSearch(busqueda) {
         return () => {
             controller.abort()
         }
-    }, [busqueda])
+    }, [busqueda, pagina])
 
-    return { sneakers, cargando, error }
+    return { sneakers, cargando, error, ...paginacion }
 
 }

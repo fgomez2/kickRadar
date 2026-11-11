@@ -1,14 +1,26 @@
 import KickHeader from "../components/KickHeader"
 import KickFooter from "../components/KickFooter"
-import { useParams } from "react-router-dom"
+import { useParams, useSearchParams } from "react-router-dom"
 import useStockxSearch from "../hooks/useStockxSearch"
 import TarjetaSneaker from "../components/TarjetaSneaker"
+import Paginacion from "../components/Paginacion"
 
 export default function BusquedaSneakers() {
 
     const { busqueda } = useParams()
+    const [searchParams, setSearchParams] = useSearchParams()
     const termino = decodeURIComponent(busqueda || '')
-    const { sneakers, cargando, error } = useStockxSearch(termino)
+
+    // La página va en la URL (?page=2) para que funcionen el botón atrás y compartir el enlace
+    const paginaParam = Number(searchParams.get('page') ?? '1')
+    const pagina = Number.isInteger(paginaParam) && paginaParam >= 1 ? paginaParam : 1
+
+    const { sneakers, cargando, error, total, totalPaginas, hayMas } = useStockxSearch(termino, pagina)
+
+    const irAPagina = (nuevaPagina) => {
+        setSearchParams(nuevaPagina > 1 ? { page: String(nuevaPagina) } : {})
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black flex flex-col">
@@ -51,13 +63,20 @@ export default function BusquedaSneakers() {
                             <div>
                                 <h3 className="text-red-200 font-semibold mb-1">Error en la búsqueda</h3>
                                 <p className="text-red-300/80">{error}</p>
+                                {pagina > 1 && (
+                                    <button type="button" onClick={() => irAPagina(1)}
+                                        className="mt-3 text-sm font-semibold text-green-400 hover:text-green-300 underline underline-offset-4 cursor-pointer"
+                                    >
+                                        Volver a la primera página
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>
                 )}
 
                 {/* Sin resultados */}
-                {termino && !cargando && !error && sneakers.length === 0 && (
+                {termino && !cargando && !error && sneakers.length === 0 && pagina === 1 && !hayMas && (
                     <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl sm:rounded-3xl border border-gray-700/50 p-8 sm:p-12 text-center shadow-[0_0_40px_rgba(75,85,99,0.2)]">
                         <div className="inline-block p-4 bg-gray-800/50 rounded-full mb-6 shadow-[0_0_20px_rgba(75,85,99,0.3)]">
                             <svg className="w-16 h-16 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -70,19 +89,32 @@ export default function BusquedaSneakers() {
                     </div>
                 )}
 
+                {/* Página sin sneakers: StockX mezcla otros productos que se filtran, o la página pedida no existe */}
+                {termino && !cargando && !error && sneakers.length === 0 && (pagina > 1 || hayMas) && (
+                    <p className="text-gray-400 text-center py-12">No hay sneakers en esta página.</p>
+                )}
+
                 {/* Resultados */}
                 {!cargando && !error && sneakers.length > 0 && (
                     <>
                         <p className="text-gray-400 mb-6">
-                            Se encontraron <span className="text-green-400 font-semibold">{sneakers.length}</span> resultados
+                            Se encontraron <span className="text-green-400 font-semibold">{total ?? sneakers.length}</span> resultados
+                            {totalPaginas > 1 && (
+                                <span className="text-gray-500"> · Página {pagina} de {totalPaginas}</span>
+                            )}
                         </p>
-                        
+
                         <section className="grid gap-4 sm:gap-5 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
                             {sneakers.map((sneaker) => (
                                 <TarjetaSneaker key={sneaker.id} sneaker={sneaker} />
                             ))}
                         </section>
                     </>
+                )}
+
+                {/* Paginación */}
+                {termino && !cargando && !error && (
+                    <Paginacion pagina={pagina} totalPaginas={totalPaginas} hayMas={hayMas} onCambiar={irAPagina} />
                 )}
             </main>
 

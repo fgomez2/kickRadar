@@ -1,36 +1,60 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { supabase } from "../supabase-client"
+import { consumirStateStockx } from "../utils/stockxAuth"
 
 export default function Callback() {
     const navigate = useNavigate()
     const [estado, setEstado] = useState('procesando') // 'procesando', 'exito', 'error'
     const [mensajeError, setMensajeError] = useState('')
-
+    const yaProcesado = useRef(false) // el código de StockX solo sirve una vez (StrictMode ejecuta el efecto dos veces)
 
     useEffect(() => {
+        if (yaProcesado.current) return
+        yaProcesado.current = true
+
+        const fallar = (mensaje) => {
+            setEstado('error')
+            setMensajeError(mensaje)
+            setTimeout(() => navigate('/'), 3000)
+        }
+
         const paramsURL = new URLSearchParams(window.location.search)
         const codigo = paramsURL.get('code')
+        const stateRecibido = paramsURL.get('state')
+        const stateEsperado = consumirStateStockx()
+
+        // Quitar el código de la barra de direcciones y del historial
+        window.history.replaceState({}, '', window.location.pathname)
 
         if (!codigo) {
-            console.error('Código de autorización no encontrado en la URL')
-            setEstado('error')
-            setMensajeError('Código de autorización no encontrado')
-            setTimeout(() => navigate('/'), 3000)
+            fallar('Código de autorización no encontrado')
+            return
+        }
+
+        // El state tiene que ser el que se generó en esta misma pestaña al iniciar la conexión
+        if (!stateEsperado || stateRecibido !== stateEsperado) {
+            fallar('La respuesta de StockX no corresponde a una conexión iniciada desde esta pestaña')
             return
         }
 
         const codigoIntercambio = async () => {
             try {
-                console.log('🔄 Iniciando intercambio de código...')
-                console.log('📍 Código recibido:', codigo)
-                
+                // La Edge Function solo acepta a un usuario administrador con sesión iniciada
+                const { data: { session } } = await supabase.auth.getSession()
+
+                if (!session) {
+                    fallar('Inicia sesión con la cuenta de administrador antes de conectar StockX')
+                    return
+                }
+
                 const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/exchange-stockx-code`,
                     {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
+                            apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+                            Authorization: `Bearer ${session.access_token}`
                         },
                         body: JSON.stringify({
                             codigo,
@@ -39,94 +63,24 @@ export default function Callback() {
                     }
                 )
 
-                console.log('📡 Respuesta HTTP status:', response.status)
+                // La función guarda los tokens en la base de datos y no los devuelve
+                const data = await response.json().catch(() => null)
 
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({ error: 'No JSON response' }))
-                    console.error('❌ Error de la Edge Function:', errorData)
-                    throw new Error(`Error ${response.status}: ${JSON.stringify(errorData)}`)
+                if (!response.ok || !data?.ok) {
+                    const mensajesPorEstado = {
+                        401: 'Tu sesión no es válida. Vuelve a iniciar sesión e inténtalo de nuevo',
+                        403: 'Tu cuenta no tiene permiso para conectar StockX',
+                    }
+                    console.error('Error al conectar StockX:', response.status, data?.error)
+                    fallar(mensajesPorEstado[response.status] || data?.error || 'Error al procesar la autenticación')
+                    return
                 }
 
-                const data = await response.json()
-                console.log('✅ Token de acceso recibido:', data)
-
-                // Guardar tokens en la tabla stockx_credentials (solo una fila)
-                if (data.access_token) {
-                    console.log('💾 Guardando tokens en base de datos...')
-                    
-                    // Calcular fecha de expiración
-                    const expiresAt = data.expires_in 
-                        ? new Date(Date.now() + (data.expires_in * 1000)).toISOString()
-                        : null
-
-                    console.log('⏰ Expiración calculada:', expiresAt)
-
-                    // Intentar actualizar si ya existe, sino insertar
-                    const { data: existing, error: selectError } = await supabase
-                        .from('stockx_credentials')
-                        .select('id')
-                        .limit(1)
-                        .maybeSingle()
-
-                    if (selectError) {
-                        console.error('❌ Error al buscar registro existente:', selectError)
-                        throw selectError
-                    }
-
-                    console.log('🔍 Registro existente:', existing ? 'SÍ' : 'NO') // ✅ No lanza error si no hay filas
-
-                    if (existing) {
-                        // Actualizar registro existente
-                        const { error: updateError } = await supabase
-                            .from('stockx_credentials')
-                            .update({
-                                access_token: data.access_token,
-                                refresh_token: data.refresh_token || null,
-                                token_expires_at: expiresAt
-                            })
-                            .eq('id', existing.id)
-
-                        if (updateError) {
-                            console.error('❌ Error actualizando tokens:', updateError)
-                            throw updateError
-                        } else {
-                            console.log('✅ Tokens actualizados en base de datos')
-                        }
-                    } else {
-                        console.log('➕ Insertando nuevo registro...')
-                        // Insertar nuevo registro
-                        const { error: insertError } = await supabase
-                            .from('stockx_credentials')
-                            .insert({
-                                access_token: data.access_token,
-                                refresh_token: data.refresh_token || null,
-                                token_expires_at: expiresAt
-                            })
-
-                        if (insertError) {
-                            console.error('❌ Error guardando tokens:', insertError)
-                            throw insertError
-                        } else {
-                            console.log('✅ Tokens guardados en base de datos')
-                        }
-                    }
-                } else {
-                    console.warn('⚠️ No se recibió access_token en la respuesta')
-                }
-
-                console.log('🎉 Proceso completado exitosamente')
                 setEstado('exito')
                 setTimeout(() => navigate('/'), 1500)
             } catch (error) {
-                console.error('💥 Error durante el intercambio del código:', error)
-                console.error('📋 Detalles completos:', {
-                    message: error.message,
-                    stack: error.stack,
-                    error: error
-                })
-                setEstado('error')
-                setMensajeError(error.message || 'Error al procesar la autenticación')
-                setTimeout(() => navigate('/'), 3000)
+                console.error('Error durante el intercambio del código:', error)
+                fallar('Error al procesar la autenticación')
             }
         }
 
@@ -163,7 +117,6 @@ export default function Callback() {
                         </div>
                     </div>
                 )}
-m
                 {estado === 'error' && (
                     <div className="flex flex-col items-center gap-6">
                         <div className="w-20 h-20 bg-red-500/20 rounded-full flex items-center justify-center">

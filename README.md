@@ -183,7 +183,7 @@ kickRadar/
 ### 🔍 Búsqueda de sneakers
 - Búsqueda en tiempo real
 - Filtrado por categoría (sneakers)
-- Resultados paginados (15 por página) PENDIENTE
+- Resultados paginados (15 por página)
 - Integración con StockX API
 
 ### 💰 Comparación de precios

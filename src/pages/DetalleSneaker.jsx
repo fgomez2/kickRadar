@@ -5,6 +5,7 @@ import KickFooter from "../components/KickFooter"
 import useStockxProduct from "../hooks/useStockxProduct"
 import useStockxPrices from "../hooks/useStockxPrices"
 import useGoatPrices from "../hooks/useGoatPrices"
+import useImagenConFallback from "../hooks/useImagenConFallback"
 import TablaPrecios from "../components/TablaPrecios"
 import { supabase } from "../supabase-client"
 
@@ -17,6 +18,7 @@ export default function DetalleSneaker() {
     const { 
         precios: preciosStockx,
         sku: skuDetectado,
+        imagen: imagenReal,
         cargando: cargandoStockx
     } = useStockxPrices(sneaker?.urlKey)
 
@@ -26,8 +28,9 @@ export default function DetalleSneaker() {
         cargando: cargandoGoat
     } = useGoatPrices(skuDetectado)
 
-    const [imagenCargada, setImagenCargada] = useState(false)
-    const [errorImagen, setErrorImagen] = useState(false)
+    // Imagen: primero las URLs deducidas y, si ninguna carga, la que llega con los precios de StockX
+    const imagen = useImagenConFallback([...(sneaker?.imagenesCandidatas ?? []), imagenReal])
+    const esperandoImagen = !imagen.src && cargandoStockx
 
     // Estados para favoritos
     const [esFavorito, setEsFavorito] = useState(false)
@@ -91,7 +94,7 @@ export default function DetalleSneaker() {
                         title: sneaker.titulo,
                         brand: sneaker.marca,
                         price_text: sneaker.precioRetail != null ? `${sneaker.precioRetail} €` : null,
-                        image_url: sneaker.imagenUrl,
+                        image_url: imagen.src ?? sneaker.imagenUrl, // la candidata que está en pantalla
                     })
 
                 if (error) {
@@ -173,16 +176,18 @@ export default function DetalleSneaker() {
                 <div className="grid md:grid-cols-2 gap-8 lg:gap-12 max-w-6xl mx-auto">
                     {/* Imagen */}
                     <div className="self-start bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl border border-gray-700/50 p-2 flex items-center justify-center">
-                        {sneaker.imagenUrl && !errorImagen ? (
+                        {imagen.src ? (
                             <>
-                                {!imagenCargada && (
+                                {!imagen.cargada && (
                                     <div className="w-16 h-16 border-4 border-gray-700 border-t-green-400 rounded-full animate-spin"></div>
                                 )}
-                                <img src={sneaker.imagenUrl} alt={sneaker.titulo}
-                                    className={`max-h-[380px] w-auto object-contain transition-opacity duration-500 ${imagenCargada ? 'opacity-100' : 'opacity-0'}`}
-                                    onLoad={() => setImagenCargada(true)} onError={() => setErrorImagen(true)}
+                                <img key={imagen.src} src={imagen.src} alt={sneaker.titulo}
+                                    className={`max-h-[380px] w-auto object-contain transition-opacity duration-500 ${imagen.cargada ? 'opacity-100' : 'opacity-0'}`}
+                                    onLoad={imagen.alCargar} onError={imagen.alFallar}
                                 />
                             </>
+                        ) : esperandoImagen ? (
+                            <div className="w-16 h-16 border-4 border-gray-700 border-t-green-400 rounded-full animate-spin"></div>
                         ) : (
                             <svg className="w-32 h-32 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />

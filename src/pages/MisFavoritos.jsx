@@ -4,6 +4,33 @@ import KickHeader from "../components/KickHeader"
 import KickFooter from "../components/KickFooter"
 import { supabase } from "../supabase-client"
 import { format } from "date-fns"
+import useImagenConFallback from "../hooks/useImagenConFallback"
+import { generarUrlsImagenFavorito } from "../utils/stockxImagenes"
+
+// Imagen de la card: si la URL guardada no carga se prueban las deducidas antes de mostrar el icono
+function ImagenFavorito({ fav }) {
+    const imagen = useImagenConFallback(generarUrlsImagenFavorito(fav))
+
+    if (imagen.src) {
+        return (
+            <img key={imagen.src} src={imagen.src} alt={fav.title}
+                className="w-full h-full object-contain"
+                onError={imagen.alFallar}
+            />
+        )
+    }
+
+    // Icono cuando no hay foto o ninguna URL carga
+    return (
+        <div className="flex flex-col items-center justify-center text-gray-500">
+            <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 10l2.5 3 2-2.5L18 16H6l3-6z" />
+                <circle cx="9" cy="7" r="1.2" />
+            </svg>
+        </div>
+    )
+}
 
 export default function MisFavoritos() {
     const headRef = useRef(null)
@@ -196,30 +223,7 @@ export default function MisFavoritos() {
                                     {/* Contenido de la card */}
                                     <div className="flex flex-col items-center text-center gap-4">
                                         <div className="relative w-full h-52 bg-gray-900/60 rounded-xl overflow-hidden flex items-center justify-center">
-                                            {fav.image_url && (
-                                                <img src={fav.image_url} alt={fav.title}
-                                                    className="w-full h-full object-contain"
-                                                    onError={(e) => {
-                                                        // Por si la imagen falla
-                                                        e.currentTarget.style.display = "none"
-                                                        const fallback = e.currentTarget.parentElement?.querySelector(
-                                                            "[data-fallback]"
-                                                        )
-                                                        if (fallback) fallback.classList.remove("hidden")
-                                                    }}
-                                                />
-                                            )}
-
-                                            {/* Icono cuando no hay foto o URL falla */}
-                                            <div data-fallback 
-                                                className={`flex flex-col items-center justify-center text-gray-500 ${fav.image_url ? "hidden" : ""}`}
-                                            >
-                                                <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M3 5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5z" />
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M9 10l2.5 3 2-2.5L18 16H6l3-6z" />
-                                                    <circle cx="9" cy="7" r="1.2" />
-                                                </svg>
-                                            </div>
+                                            <ImagenFavorito fav={fav} />
                                         </div>
 
                                         {/* Texto */}

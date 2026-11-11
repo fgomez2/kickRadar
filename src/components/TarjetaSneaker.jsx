@@ -1,9 +1,9 @@
-import { useState } from "react"
 import { useNavigate } from "react-router-dom"
+import useImagenConFallback from "../hooks/useImagenConFallback"
 
 export default function TarjetaSneaker({ sneaker }) {
-    const [imagenCargada, setImagenCargada] = useState(false)
-    const [errorImagen, setErrorImagen] = useState(false)
+    // La URL de la imagen es deducida: se prueban varias candidatas hasta que una carga
+    const imagen = useImagenConFallback(sneaker.imagenesCandidatas ?? [])
     const navigate = useNavigate()
 
     const handleClick = () => {
@@ -20,17 +20,17 @@ export default function TarjetaSneaker({ sneaker }) {
             <div className="aspect-[4/3] bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center relative overflow-hidden">
                 <div className="absolute inset-0 bg-green-400/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                {sneaker.imagenUrl && !errorImagen ? (
+                {imagen.src ? (
                     <>
-                        {!imagenCargada && (
+                        {!imagen.cargada && (
                             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                                 <div className="w-12 h-12 border-4 border-gray-700 border-t-green-400 rounded-full animate-spin" />
                             </div>
                         )}
 
-                        <img src={sneaker.imagenUrl} alt={sneaker.titulo}
-                            className={`w-full h-full object-contain block transition-all duration-500 group-hover:scale-105 ${imagenCargada ? "opacity-100" : "opacity-0"}`}
-                            onLoad={() => setImagenCargada(true)} onError={() => setErrorImagen(true)} loading="lazy"
+                        <img key={imagen.src} src={imagen.src} alt={sneaker.titulo}
+                            className={`w-full h-full object-contain block transition-all duration-500 group-hover:scale-105 ${imagen.cargada ? "opacity-100" : "opacity-0"}`}
+                            onLoad={imagen.alCargar} onError={imagen.alFallar} loading="lazy"
                         />
                     </>
                 ) : (

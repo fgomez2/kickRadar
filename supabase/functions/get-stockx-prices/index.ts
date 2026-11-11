@@ -40,7 +40,7 @@ serve(async (req: Request): Promise<Response> => {
 
     if (!response.ok) {
         console.error(`--> KicksDB Error: ${response.status}`)
-        return new Response(JSON.stringify({ variants: [], sku: null }), {
+        return new Response(JSON.stringify({ variants: [], sku: null, image: null }), {
             status: 200, // Devolvemos 200 con array vacío para no romper el front (por si)
             headers: { ...corsHeaders, "Content-Type": "application/json" },
         })
@@ -53,6 +53,10 @@ serve(async (req: Request): Promise<Response> => {
 
     // EXTRACCIÓN DEL sku
     const stockxSku = jsonResponse.data?.sku || null
+
+    // EXTRACCIÓN DE LA IMAGEN: KicksDB trae la URL real, la API oficial de StockX no
+    const posibleImagen = jsonResponse.data?.image ?? jsonResponse.data?.gallery?.[0]
+    const stockxImage = typeof posibleImagen === "string" && posibleImagen.startsWith("https://") ? posibleImagen : null
 
     const cleanPrices = variants.map((variant: any) => {
         const askPrice = variant.lowest_ask
@@ -78,7 +82,8 @@ serve(async (req: Request): Promise<Response> => {
 
     return new Response(JSON.stringify({
       variants: cleanPrices,
-      sku: stockxSku
+      sku: stockxSku,
+      image: stockxImage
     }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
