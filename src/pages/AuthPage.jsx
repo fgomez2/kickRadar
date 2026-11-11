@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '../supabase-client'
 import { useAuth } from '../modules/auth/AuthContext'
 import KickHeaderAuth from '../components/KickHeaderAuth'
+import { evaluarPassword, LONGITUD_MINIMA_PASSWORD } from '../utils/validarPassword'
 
 export default function AuthPage() {
     const { sesion } = useAuth()
@@ -17,6 +18,7 @@ export default function AuthPage() {
     const [mensaje, setMensaje] = useState(null)
     const [tipoMensaje, setTipoMensaje] = useState('info') // 'info' o 'error'
     const [animando, setAnimando] = useState(false) // efecto animación al cambiar modo
+    const [emailPendiente, setEmailPendiente] = useState(null) // email que falta por confirmar (para poder reenviar el correo)
 
     // Si ya hay sesión, se redirije a la pag principal
     useEffect(() => {
@@ -25,8 +27,24 @@ export default function AuthPage() {
         }
     }, [sesion, navigate])
 
-    // Errores coumunes de Supabase
+    // Errores coumunes de Supabase (primero por código, que es estable; después por mensaje)
     const getErrorMessage = (error) => {
+        // Supabase rechaza la contraseña si aparece en filtraciones conocidas (si esa protección está activada)
+        if (error.code === 'weak_password' && error.reasons?.includes('pwned')) {
+            return 'Esta contraseña aparece en filtraciones de datos conocidas. Elige otra distinta.'
+        }
+
+        const erroresPorCodigo = {
+            invalid_credentials: 'Credenciales inválidas. Por favor, verifica tu email y contraseña.',
+            user_already_exists: 'El usuario ya está registrado. Por favor, inicia sesión.',
+            email_not_confirmed: 'El email no ha sido confirmado. Por favor, revisa tu bandeja de entrada.',
+            weak_password: `La contraseña no es lo bastante segura: necesita al menos ${LONGITUD_MINIMA_PASSWORD} caracteres, con minúsculas, mayúsculas y números.`,
+            email_address_invalid: 'El email no es válido.',
+            email_address_not_authorized: 'No se ha podido enviar el email de confirmación a esta dirección.',
+            over_email_send_rate_limit: 'Se han enviado demasiados emails. Espera unos minutos y vuelve a intentarlo.',
+            over_request_rate_limit: 'Demasiados intentos. Espera unos minutos y vuelve a intentarlo.',
+        }
+
         const erroresComunes = {
             'Invalid login credentials': 'Credenciales inválidas. Por favor, verifica tu email y contraseña.',
             'User already registered': 'El usuario ya está registrado. Por favor, inicia sesión.',
@@ -34,13 +52,14 @@ export default function AuthPage() {
             'Password should be at least 6 characters': 'La contraseña debe tener al menos 6 caracteres.'
         }
 
-        return erroresComunes[error.message] || error.message
+        return erroresPorCodigo[error.code] || erroresComunes[error.message] || error.message
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault()
         setLoading(true)
         setMensaje(null)
+        setEmailPendiente(null)
 
         try {
             // Validaciones para registro
@@ -65,8 +84,16 @@ export default function AuthPage() {
                     setLoading(false)
                     return
                 }
+
+                // La contraseña solo se valida al registrarse: las cuentas antiguas pueden seguir entrando con la suya
+                if (evaluarPassword(password).some((requisito) => !requisito.cumple)) {
+                    setTipoMensaje('error')
+                    setMensaje('La contraseña no cumple todos los requisitos.')
+                    setLoading(false)
+                    return
+                }
             }
-            
+
             if (modo === 'login') {
                 const { error } = await supabase.auth.signInWithPassword({ email, password })
 
@@ -91,8 +118,10 @@ export default function AuthPage() {
                 if (error) throw error
 
                 if (!data.session) {
+                    // Con la confirmación de email activada no hay sesión hasta que se pulsa el enlace del correo
                     setTipoMensaje('info')
                     setMensaje('Registro exitoso. Por favor, revisa tu email para confirmar tu cuenta.')
+                    setEmailPendiente(email)
                 } else {
                     setTipoMensaje('exito')
                     setMensaje('¡Registro exitoso! Bienvenido.')
@@ -104,6 +133,35 @@ export default function AuthPage() {
             console.error('Código:', err.code) // Ver código de error si existe
             setTipoMensaje('error')
             setMensaje(getErrorMessage(err))
+
+            // Si falta confirmar el email se ofrece reenviar el correo
+            if (err.code === 'email_not_confirmed') {
+                setEmailPendiente(email)
+            }
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    // Reenviar el email de confirmación del registro
+    const handleReenviar = async () => {
+        setLoading(true)
+
+        try {
+            const { error } = await supabase.auth.resend({
+                type: 'signup',
+                email: emailPendiente,
+                options: { emailRedirectTo: window.location.origin }
+            })
+
+            if (error) throw error
+
+            setTipoMensaje('info')
+            setMensaje('Te hemos enviado otro email de confirmación. Revisa también la carpeta de spam.')
+        } catch (err) {
+            console.error('Error al reenviar el email de confirmación:', err)
+            setTipoMensaje('error')
+            setMensaje(getErrorMessage(err))
         } finally {
             setLoading(false)
         }
@@ -111,11 +169,12 @@ export default function AuthPage() {
 
     const toggleModo = () => {
         setAnimando(true)
-        
+
         // Esperar a que termine la animación de salida antes de cambiar el modo
         setTimeout(() => {
             setModo(modo === 'login' ? 'registro' : 'login')
             setMensaje(null)
+            setEmailPendiente(null)
             setTipoMensaje('info')
             setNombreCompleto('') // Limpiar nombre al cambiar modo
             
@@ -216,7 +275,7 @@ export default function AuthPage() {
                             </label>
                             <div className="relative">
                                 <input id="password" type={mostrarPassword ? 'text' : 'password'} required
-                                    minLength={6} value={password} onChange={(e) => setPassword(e.target.value)}
+                                    minLength={modo === 'registro' ? LONGITUD_MINIMA_PASSWORD : undefined} value={password} onChange={(e) => setPassword(e.target.value)}
                                     placeholder="••••••••" autoComplete={modo === 'login' ? 'current-password' : 'new-password'} disabled={loading}
                                     className="w-full px-4 py-3.5 pr-12 bg-gray-800/50 border-2 border-gray-700 rounded-xl text-white 
                                     placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-400/50 focus:border-green-400 transition-all duration-300 disabled:opacity-50 
@@ -241,6 +300,20 @@ export default function AuthPage() {
                                     )}
                                 </button>
                             </div>
+
+                            {/* Requisitos de la contraseña (solo en registro): se van marcando al escribir */}
+                            {modo === 'registro' && (
+                                <ul className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                                    {evaluarPassword(password).map((requisito) => (
+                                        <li key={requisito.id}
+                                            className={`flex items-center gap-1.5 transition-colors duration-200 ${requisito.cumple ? 'text-green-400' : 'text-gray-500'}`}
+                                        >
+                                            <span aria-hidden="true" className="w-3 text-center">{requisito.cumple ? '✓' : '•'}</span>
+                                            {requisito.texto}
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
                         </div>
 
                         {/* Botón Submit */}
@@ -299,7 +372,16 @@ export default function AuthPage() {
                                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                                     </svg>
                                 )}
-                                <span>{mensaje}</span>
+                                <div>
+                                    <span>{mensaje}</span>
+                                    {emailPendiente && (
+                                        <button type="button" onClick={handleReenviar} disabled={loading}
+                                            className="mt-2 block font-semibold underline underline-offset-4 hover:text-white transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                                        >
+                                            Reenviar email de confirmación
+                                        </button>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     )}

@@ -73,18 +73,25 @@ export function generarUrlsImagen({ urlKey, titulo }) {
 }
 
 /**
+ * Los favoritos no guardan el urlKey, pero las URLs deducidas son el urlKey capitalizado:
+ * se recupera a partir de la URL guardada. Devuelve null si la URL no es del CDN de StockX.
+ */
+export function urlKeyDesdeImagen(image_url) {
+    if (!image_url?.startsWith(BASE_IMAGENES)) return null
+
+    const nombre = image_url.slice(BASE_IMAGENES.length).split('?')[0].replace(/(-Product)?\.jpg$/i, '')
+    return nombre.toLowerCase() || null
+}
+
+/**
  * Candidatas para un favorito guardado: primero la URL almacenada y después las deducidas,
  * para recuperar favoritos que se guardaron con una URL que no carga.
  */
 export function generarUrlsImagenFavorito({ image_url, title }) {
     if (!image_url) return []
 
-    const candidatas = [image_url]
-
-    if (image_url.startsWith(BASE_IMAGENES)) {
-        const nombre = image_url.slice(BASE_IMAGENES.length).split('?')[0].replace(/(-Product)?\.jpg$/i, '')
-        candidatas.push(...generarUrlsImagen({ urlKey: nombre.toLowerCase(), titulo: title }))
-    }
+    const urlKey = urlKeyDesdeImagen(image_url)
+    const candidatas = [image_url, ...(urlKey ? generarUrlsImagen({ urlKey, titulo: title }) : [])]
 
     return [...new Set(candidatas)]
 }

@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom"
-import useImagenConFallback from "../hooks/useImagenConFallback"
+import useImagenSneaker from "../hooks/useImagenSneaker"
 
 export default function TarjetaSneaker({ sneaker }) {
-    // La URL de la imagen es deducida: se prueban varias candidatas hasta que una carga
-    const imagen = useImagenConFallback(sneaker.imagenesCandidatas ?? [])
+    // La URL de la imagen es deducida: se prueban varias candidatas y, si ninguna carga, se pide la real al servidor
+    const imagen = useImagenSneaker({ urlKey: sneaker.urlKey, candidatas: sneaker.imagenesCandidatas ?? [] })
     const navigate = useNavigate()
 
     const handleClick = () => {
@@ -33,6 +33,8 @@ export default function TarjetaSneaker({ sneaker }) {
                             onLoad={imagen.alCargar} onError={imagen.alFallar} loading="lazy"
                         />
                     </>
+                ) : imagen.buscando ? (
+                    <div className="w-12 h-12 border-4 border-gray-700 border-t-green-400 rounded-full animate-spin" />
                 ) : (
                     // MISMA ALTURA, ICONO CENTRADO
                     <svg className="w-20 h-20 text-gray-700 group-hover:text-gray-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">

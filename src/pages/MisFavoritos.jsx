@@ -4,12 +4,15 @@ import KickHeader from "../components/KickHeader"
 import KickFooter from "../components/KickFooter"
 import { supabase } from "../supabase-client"
 import { format } from "date-fns"
-import useImagenConFallback from "../hooks/useImagenConFallback"
-import { generarUrlsImagenFavorito } from "../utils/stockxImagenes"
+import useImagenSneaker from "../hooks/useImagenSneaker"
+import { generarUrlsImagenFavorito, urlKeyDesdeImagen } from "../utils/stockxImagenes"
 
-// Imagen de la card: si la URL guardada no carga se prueban las deducidas antes de mostrar el icono
+// Imagen de la card: si la URL guardada no carga se prueban las deducidas y la real antes de mostrar el icono
 function ImagenFavorito({ fav }) {
-    const imagen = useImagenConFallback(generarUrlsImagenFavorito(fav))
+    const imagen = useImagenSneaker({
+        urlKey: urlKeyDesdeImagen(fav.image_url),
+        candidatas: generarUrlsImagenFavorito(fav),
+    })
 
     if (imagen.src) {
         return (
@@ -18,6 +21,10 @@ function ImagenFavorito({ fav }) {
                 onError={imagen.alFallar}
             />
         )
+    }
+
+    if (imagen.buscando) {
+        return <div className="w-10 h-10 border-4 border-gray-700 border-t-green-400 rounded-full animate-spin" />
     }
 
     // Icono cuando no hay foto o ninguna URL carga

@@ -421,3 +421,10 @@ entrypoint = "./functions/get-goat-prices/index.ts"
 # Specifies static files to be bundled with the function. Supports glob patterns.
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/get-goat-prices/*.html" ]
+
+[functions.stockx-image]
+enabled = true
+# La función exige además un usuario con sesión (no vale la anon key)
+verify_jwt = true
+import_map = "./functions/stockx-image/deno.json"
+entrypoint = "./functions/stockx-image/index.ts"
